@@ -1,7 +1,7 @@
 #' @include install-PD.R
 NULL
 
-doInstall <- function(action, lib.loc, allDeps, pkgs, origin, repos, reposPD = "https://rickhelmus.github.io/patRoonDeps",
+doInstall <- function(action, libPaths, allDeps, pkgs, origin, repos, reposPD = "https://rickhelmus.github.io/patRoonDeps",
                       instDE = FALSE)
 {
     # Check compatibility
@@ -9,6 +9,14 @@ doInstall <- function(action, lib.loc, allDeps, pkgs, origin, repos, reposPD = "
     # Initialize backend
     # Get installed packages
     # Compare with origin and decide with action which packages should be installed
+
+    lp <- NULL
+    if (!is.null(libPaths))
+    {
+        lp <- .libPaths()
+        on.exit(.libPaths(lp), add = TRUE)
+        .libPaths(libPaths, include.site = FALSE)
+    }
 
     # UNDONE: cache this?
     printf("Downloading dependency file\n")
@@ -20,7 +28,7 @@ doInstall <- function(action, lib.loc, allDeps, pkgs, origin, repos, reposPD = "
     if (!instDE)
         directDeps <- directDeps[!names(directDeps) %in% c("patRoonData", "patRoonExt", "MetaCleanData")] # UNDONE: keep MetacleanData?
 
-    instPackages <- installed.packages(lib.loc, fields = "RemoteSha")[, c("Package", "Version", "RemoteSha")]
+    instPackages <- installed.packages(fields = "RemoteSha")[, c("Package", "Version", "RemoteSha")]
     instPackages <- as.data.frame(instPackages)
 
     backend <- switch(origin,
@@ -67,7 +75,7 @@ doInstall <- function(action, lib.loc, allDeps, pkgs, origin, repos, reposPD = "
     printActions("updated", "update")
     printActions("synchronized", "sync")
 
-    backend$install(considerPackages, lib.loc, directDeps)
+    backend$install(considerPackages, directDeps)
 }
 
 #' @export
