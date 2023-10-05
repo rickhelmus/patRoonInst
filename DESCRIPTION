@@ -1,0 +1,27 @@
+Package: patRoonInst
+Type: Package
+Title: Manages patRoon Installations
+Version: 1.0.0
+Author: Rick Helmus
+Maintainer: Rick Helmus <r.helmus@uva.nl>
+Description: Installs and updates patRoon and its dependencies.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/rickhelmus/patRoonInst
+BugReports: https://github.com/rickhelmus/patRoon/issues
+Depends: R (>= 4.0)
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+    methods,
+    checkmate,
+    jsonlite,
+    remotes,
+    BiocManager
+Collate: 
+    'install-backend.R'
+    'install-PD.R'
+    'install-RU.R'
+    'install.R'
+    'utils.R'
