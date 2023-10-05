@@ -1,7 +1,7 @@
-#' @include install-backend.R
+#' @include install-main.R
 NULL
 
-installRU <- setRefClass("installRU", contains = "installBackend",
+installRU <- setRefClass("installRU", contains = "installMain",
                          fields = list(repos = "character", reposInfo = "data.frame"))
 
 installRU$methods(

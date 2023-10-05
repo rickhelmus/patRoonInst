@@ -1,9 +1,9 @@
 #' @import methods
 NULL
 
-installBackend <- setRefClass("installBackend", contains = "VIRTUAL")
+installMain <- setRefClass("installMain")
 
-installBackend$methods(
+installMain$methods(
     availablePackages = function(directDeps)
     {
         avail <- getAvailablePackages(repos = BiocManager::repositories())
