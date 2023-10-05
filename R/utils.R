@@ -1,8 +1,5 @@
 printf <- function(...) cat(sprintf(...), sep = "")
 
-# Check without loading namespace, from: https://hohenfeld.is/posts/check-if-a-package-is-installed-in-r/
-isInstalled <- function(pkg, lib.loc = NULL) nzchar(system.file(package = pkg, lib.loc = lib.loc))
-
 downloadFile <- function(url, dest)
 {
     # increase timeout for large files, thanks to https://stackoverflow.com/a/68944877
