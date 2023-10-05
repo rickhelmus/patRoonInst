@@ -1,8 +1,7 @@
-#' @include install-main.R
+#' @include install-repos.R
 NULL
 
-installPD <- setRefClass("installPD", contains = "installMain",
-                         fields = list(repos = "character", reposInfo = "data.frame"))
+installPD <- setRefClass("installPD", contains = "installRepos")
 
 installPD$methods(
     initialize = function(..., repos = NULL)
@@ -14,31 +13,6 @@ installPD$methods(
         ri <- read.csv(f, sep = "\t", colClasses = "character")
         ri$RemoteSha[!nzchar(ri$RemoteSha)] <- NA_character_ # normalize with installed.packages
 
-        callSuper(..., repos = rep, reposInfo = ri)
-    },
-
-    availablePackages = function(directDeps)
-    {
-        ret <- reposInfo
-        otherPackages <- directDeps[!names(directDeps) %in% ret$Package]
-        if (length(otherPackages) > 0)
-            ret <- rbind(ret, callSuper(otherPackages))
-
-        return(ret)
-    },
-
-    install = function(pkgs, ...)
-    {
-        pkgsInRepos <- pkgs[pkgs$Package %in% reposInfo$Package, ]
-
-        for (pkg in pkgsInRepos$Package)
-        {
-            installMsg(pkg, "patRoonDeps")
-            utils::install.packages(pkg, repos = .self$repos, type = "binary", quiet = TRUE)
-        }
-
-        otherPkgs <- pkgs[!pkgs$Package %in% reposInfo$Package, ]
-        if (nrow(otherPkgs) > 0)
-            callSuper(pkgs = otherPkgs, ...)
+        callSuper(..., repos = rep, reposInfo = ri, reposName = "patRoonDeps")
     }
 )

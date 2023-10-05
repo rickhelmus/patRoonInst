@@ -21,6 +21,7 @@ Imports:
     BiocManager
 Collate: 
     'install-main.R'
+    'install-repos.R'
     'install-PD.R'
     'install-RU.R'
     'install.R'
