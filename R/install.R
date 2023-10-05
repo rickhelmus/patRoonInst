@@ -4,15 +4,19 @@ NULL
 doInstall <- function(action, libPaths, allDeps, pkgs, origin, repos, reposPD = "https://rickhelmus.github.io/patRoonDeps",
                       instDE = FALSE)
 {
-    # Check compatibility
-    # Get Rdeps.R
-    # Initialize backend
-    # Get installed packages
-    # Compare with origin and decide with action which packages should be installed
+    # UNDONE: move repos args to options()
+    # UNDONE: clean option to be used with sync
+    # UNDONE: check args (checkmate?)
+    # UNDONE: handle pkgs arg (rename?)
+    # UNDONE: check compatibility
+    # UNDONE: optionally ask before proceeding? (enabled by default)
 
     lp <- NULL
     if (!is.null(libPaths))
     {
+        # NOTE: .libPaths() is set here to prevent install.packages() (and derived functions) from looking for
+        # dependencies outside the target library. Unfortunately, this won't remove the default library (ie .Library)
+        # from the search path, but this library is often static
         lp <- .libPaths()
         on.exit(.libPaths(lp), add = TRUE)
         .libPaths(libPaths, include.site = FALSE)
@@ -28,12 +32,14 @@ doInstall <- function(action, libPaths, allDeps, pkgs, origin, repos, reposPD = 
     if (!instDE)
         directDeps <- directDeps[!names(directDeps) %in% c("patRoonData", "patRoonExt", "MetaCleanData")] # UNDONE: keep MetacleanData?
 
-    instPackages <- installed.packages(fields = "RemoteSha")[, c("Package", "Version", "RemoteSha")]
+    # set lib.loc here as otherwise installed.packages() includes the default library (see comment above)
+    instPackages <- installed.packages(lib.loc = libPaths, fields = "RemoteSha")[, c("Package", "Version", "RemoteSha")]
     instPackages <- as.data.frame(instPackages)
 
     backend <- switch(origin,
                       patRoonDeps = installPD$new(repos = repos),
-                      runiverse = installRU$new(repos = repos))
+                      runiverse = installRU$new(repos = repos),
+                      regular = installMain$new())
     availPackages <- backend$availablePackages(directDeps)
 
     # set rownames to simplify things
