@@ -27,18 +27,18 @@ installPD$methods(
         return(ret)
     },
 
-    install = function(pkgs, ...)
+    install = function(pkgs, lib.loc, ...)
     {
         pkgsInRepos <- pkgs[pkgs$Package %in% reposInfo$Package, ]
 
         for (pkg in pkgsInRepos$Package)
         {
             installMsg(pkg, "patRoonDeps")
-            # utils::install.packages(pkg, repos = self$repos, type = "binary", quiet = TRUE)
+            utils::install.packages(pkg, repos = .self$repos, type = "binary", quiet = TRUE, lib = lib.loc)
         }
 
         otherPkgs <- pkgs[!pkgs$Package %in% reposInfo$Package, ]
         if (nrow(otherPkgs) > 0)
-            callSuper(otherPkgs, ...)
+            callSuper(pkgs = otherPkgs, lib.loc = lib.loc, ...)
     }
 )

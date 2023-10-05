@@ -34,7 +34,7 @@ installBackend$methods(
         return(avail)
     },
 
-    install = function(pkgs, directDeps)
+    install = function(pkgs, lib.loc, directDeps)
     {
         for (i in seq_len(nrow(pkgs)))
         {
@@ -42,14 +42,14 @@ installBackend$methods(
             if (is.na(pkgs$RemoteSha.avail[i]))
             {
                 installMsg(pkgn, "CRAN/BioConductor")
-                # BiocManager::install(pkgn, update = FALSE, ask = FALSE, force = TRUE)
+                BiocManager::install(pkgn, lib.loc = lib, update = FALSE, ask = FALSE, force = TRUE)
             }
             else
             {
                 installMsg(pkgn, "GitHub")
                 dd <- directDeps[[pkgn]]
-                # remotes::install_github(getGHRepos(pkgn, dd), ref = getGHRef(dd), subdir = dd[["subdir"]],
-                #                         upgrade = "never", force = TRUE, quiet = TRUE)
+                remotes::install_github(getGHRepos(pkgn, dd), ref = getGHRef(dd), subdir = dd[["subdir"]],
+                                        upgrade = "never", force = TRUE, quiet = TRUE, lib = lib.loc)
             }
         }
     }

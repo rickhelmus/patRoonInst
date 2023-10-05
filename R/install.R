@@ -1,7 +1,8 @@
 #' @include install-PD.R
 NULL
 
-doInstall <- function(action, lib.loc, allDeps, pkgs, origin, repos, reposPD = "https://rickhelmus.github.io/patRoonDeps")
+doInstall <- function(action, lib.loc, allDeps, pkgs, origin, repos, reposPD = "https://rickhelmus.github.io/patRoonDeps",
+                      instDE = FALSE)
 {
     # Check compatibility
     # Get Rdeps.R
@@ -16,6 +17,8 @@ doInstall <- function(action, lib.loc, allDeps, pkgs, origin, repos, reposPD = "
     rdenv <- new.env()
     source(rdpath, local = rdenv)
     directDeps <- rdenv$getRDependencies("master", getOS(), withInternal = FALSE, flatten = TRUE)
+    if (!instDE)
+        directDeps <- directDeps[!names(directDeps) %in% c("patRoonData", "patRoonExt", "MetaCleanData")] # UNDONE: keep MetacleanData?
 
     instPackages <- installed.packages(lib.loc, fields = "RemoteSha")[, c("Package", "Version", "RemoteSha")]
     instPackages <- as.data.frame(instPackages)
@@ -48,12 +51,23 @@ doInstall <- function(action, lib.loc, allDeps, pkgs, origin, repos, reposPD = "
     if (action != "install")
     {
         considerPackages[is.na(considerPackages$action) & shouldUpdate(considerPackages), "action"] <- action # update/sync
-        considerPackages[is.na(considerPackages$action) & shouldGHSync(considerPackages), "action"] <- "ghsync"
+        considerPackages[is.na(considerPackages$action) & shouldGHSync(considerPackages), "action"] <- "sync"
     }
 
     considerPackages <- considerPackages[!is.na(considerPackages$action), ]
 
-    backend$install(considerPackages, directDeps)
+    printActions <- function(what, pkgAction)
+    {
+        whpkgs <- considerPackages[considerPackages$action == pkgAction, "Package"]
+        if (length(whpkgs) > 0)
+            printf("The following %d packages will be %s: %s\n", length(whpkgs), what, paste0(whpkgs, collapse = ", "))
+    }
+
+    printActions("installed", "install")
+    printActions("updated", "update")
+    printActions("synchronized", "sync")
+
+    backend$install(considerPackages, lib.loc, directDeps)
 }
 
 #' @export
