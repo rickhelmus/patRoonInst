@@ -2,13 +2,14 @@
 NULL
 
 installRepos <- setRefClass("installRepos", contains = c("installMain", "VIRTUAL"),
-                            fields = list(repos = "character", reposInfo = "data.frame", reposName = "character"))
+                            fields = list(reposInfo = "data.frame", reposName = "character", binaryOnly = "logical"))
 
 installRepos$methods(
+    initialize = function(binaryOnly = FALSE, ...) callSuper(binaryOnly = binaryOnly, ...),
+
     availablePackages = function(directDeps)
     {
         ret <- reposInfo
-
         otherPackages <- directDeps[!names(directDeps) %in% ret$Package]
         if (length(otherPackages) > 0)
             ret <- rbind(ret, callSuper(otherPackages))
@@ -19,10 +20,14 @@ installRepos$methods(
     {
         pkgsInRepos <- pkgs[pkgs$Package %in% reposInfo$Package, ]
 
+        instArgs <- list(repos = patRoonRepos(reposName), quiet = TRUE)
+        if (binaryOnly)
+            instArgs <- c(instArgs, type = "binary")
+
         for (pkg in pkgsInRepos$Package)
         {
             installMsg(pkg, reposName)
-            utils::install.packages(pkg, repos = .self$repos, type = "binary", quiet = TRUE)
+            do.call(utils::install.packages, c(list(pkg), instArgs))
         }
 
         otherPkgs <- pkgs[!pkgs$Package %in% reposInfo$Package, ]

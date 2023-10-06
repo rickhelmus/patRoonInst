@@ -26,3 +26,4 @@ Collate:
     'install-RU.R'
     'install.R'
     'utils.R'
+    'zzz.R'

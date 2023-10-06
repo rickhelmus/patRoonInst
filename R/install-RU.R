@@ -4,12 +4,10 @@ NULL
 installRU <- setRefClass("installRU", contains = "installRepos")
 
 installRU$methods(
-    initialize = function(..., repos = NULL)
+    initialize = function(...)
     {
-        rep = if (is.null(repos)) "https://rickhelmus.r-universe.dev" else repos
-
         f <- tempfile(fileext = ".json")
-        downloadFile(paste0(rep, "/api/packages/"), f)
+        downloadFile(paste0(patRoonRepos("r-universe"), "/api/packages/"), f)
         packagesJS <- jsonlite::read_json(f)
 
         # convert to simple data.frame
@@ -23,6 +21,6 @@ installRU$methods(
         })
         ri <- do.call(rbind.data.frame, riList)
 
-        callSuper(..., repos = rep, reposInfo = ri, reposName = "r-universe")
+        callSuper(..., reposInfo = ri, reposName = "r-universe")
     }
 )

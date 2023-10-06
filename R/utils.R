@@ -34,3 +34,12 @@ getGHRef <- function(md)
 }
 
 installMsg <- function(pkg, type) printf("Installing package %s (%s)...\n", pkg, type)
+
+patRoonRepos <- function(which)
+{
+    opt <- paste0(packageName(), ".repos.", if (which == "r-universe") "runiverse" else which)
+    ret <- getOption(opt)
+    if (is.null(ret))
+        stop(sprintf("Cannot use %s repos: the '%s' option is unset", which, opt), call. = FALSE)
+    return(ret)
+}

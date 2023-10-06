@@ -1,10 +1,8 @@
 #' @include install-PD.R
 NULL
 
-doInstall <- function(action, libPaths, allDeps, pkgs, origin, repos, reposPD = "https://rickhelmus.github.io/patRoonDeps",
-                      instDE = FALSE)
+doInstall <- function(action, libPaths, allDeps, pkgs, origin, instDE = FALSE)
 {
-    # UNDONE: move repos args to options()
     # UNDONE: clean option to be used with sync
     # UNDONE: check args (checkmate?)
     # UNDONE: handle pkgs arg (rename?)
@@ -25,7 +23,7 @@ doInstall <- function(action, libPaths, allDeps, pkgs, origin, repos, reposPD = 
     # UNDONE: cache this?
     printf("Downloading dependency file\n")
     rdpath <- tempfile(fileext = ".R")
-    downloadFile(paste0(reposPD, "/utils/Rdeps.R"), rdpath)
+    downloadFile(paste0(patRoonRepos("patRoonDeps"), "/utils/Rdeps.R"), rdpath)
     rdenv <- new.env()
     source(rdpath, local = rdenv)
     directDeps <- rdenv$getRDependencies("master", getOS(), withInternal = FALSE, flatten = TRUE)
@@ -37,8 +35,8 @@ doInstall <- function(action, libPaths, allDeps, pkgs, origin, repos, reposPD = 
     instPackages <- as.data.frame(instPackages)
 
     backend <- switch(origin,
-                      patRoonDeps = installPD$new(repos = repos),
-                      runiverse = installRU$new(repos = repos),
+                      patRoonDeps = installPD$new(),
+                      runiverse = installRU$new(),
                       regular = installMain$new())
     availPackages <- backend$availablePackages(directDeps)
 
