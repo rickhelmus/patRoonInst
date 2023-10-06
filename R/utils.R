@@ -33,6 +33,8 @@ getGHRef <- function(md)
         "master"
 }
 
+askProceed = function() !interactive() || menu(c("Yes", "No"), title = "Do you want to proceed?") == 1
+
 installMsg <- function(pkg, type) printf("Installing package %s (%s)...\n", pkg, type)
 
 patRoonRepos <- function(which)

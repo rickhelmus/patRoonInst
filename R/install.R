@@ -1,14 +1,13 @@
 #' @include install-PD.R
 NULL
 
-doInstall <- function(action, pkgs, ignorePkgs, origin, libPaths, allDeps)
+doInstall <- function(action, pkgs, ignorePkgs, origin, libPaths, allDeps, ask)
 {
     # UNDONE: clean option to be used with sync
     # UNDONE: check args (checkmate?)
     # UNDONE: doc "big" option for ignorePkgs
     # UNDONE: doc that allDeps doesn't work with pkgs/ignorePkgs (also verify args for this)
     # UNDONE: check compatibility
-    # UNDONE: optionally ask before proceeding? (enabled by default)
     # UNDONE: force argument?
 
     lp <- NULL
@@ -94,6 +93,12 @@ doInstall <- function(action, pkgs, ignorePkgs, origin, libPaths, allDeps)
 
     considerPackages <- considerPackages[!is.na(considerPackages$action), ]
 
+    if (nrow(considerPackages) == 0)
+    {
+        printf("The current installation seems already fine.\n")
+        return(invisible(NULL))
+    }
+
     printActions <- function(what, pkgAction)
     {
         whpkgs <- considerPackages[considerPackages$action == pkgAction, "Package"]
@@ -105,7 +110,10 @@ doInstall <- function(action, pkgs, ignorePkgs, origin, libPaths, allDeps)
     printActions("updated", "update")
     printActions("synchronized", "sync")
 
-    backend$install(considerPackages, directDeps)
+    if (!ask || askProceed())
+        backend$install(considerPackages, directDeps)
+
+    invisible(NULL)
 }
 
 #' @export
