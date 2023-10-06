@@ -1,13 +1,15 @@
 #' @include install-PD.R
 NULL
 
-doInstall <- function(action, libPaths, allDeps, pkgs, origin, instDE = FALSE)
+doInstall <- function(action, pkgs, ignorePkgs, origin, libPaths, allDeps)
 {
     # UNDONE: clean option to be used with sync
     # UNDONE: check args (checkmate?)
-    # UNDONE: handle pkgs arg (rename?)
+    # UNDONE: doc "big" option for ignorePkgs
+    # UNDONE: doc that allDeps doesn't work with pkgs/ignorePkgs (also verify args for this)
     # UNDONE: check compatibility
     # UNDONE: optionally ask before proceeding? (enabled by default)
+    # UNDONE: force argument?
 
     lp <- NULL
     if (!is.null(libPaths))
@@ -27,8 +29,32 @@ doInstall <- function(action, libPaths, allDeps, pkgs, origin, instDE = FALSE)
     rdenv <- new.env()
     source(rdpath, local = rdenv)
     directDeps <- rdenv$getRDependencies("master", getOS(), withInternal = FALSE, flatten = TRUE)
-    if (!instDE)
-        directDeps <- directDeps[!names(directDeps) %in% c("patRoonData", "patRoonExt", "MetaCleanData")] # UNDONE: keep MetacleanData?
+
+    checkPkgs <- function(p)
+    {
+        o <- setdiff(p, names(directDeps))
+        if (length(o) > 0)
+            stop(paste("The following packages are unknown:", paste0(o, collapse = ", ")))
+    }
+
+    if (!is.null(pkgs))
+    {
+        checkPkgs(pkgs)
+        directDeps <- directDeps[pkgs]
+    }
+    if (!is.null(ignorePkgs))
+    {
+        if (ignorePkgs == "big")
+            ignorePkgs <- c("patRoonData", "patRoonExt", "MetaCleanData")
+        else
+            checkPkgs(ignorePkgs)
+        directDeps <- directDeps[!names(directDeps) %in% ignorePkgs]
+    }
+    if (length(directDeps) == 0)
+    {
+        printf("Nothing to install, aborting...")
+        return(invisible(NULL))
+    }
 
     # set lib.loc here as otherwise installed.packages() includes the default library (see comment above)
     instPackages <- installed.packages(lib.loc = libPaths, fields = "RemoteSha")[, c("Package", "Version", "RemoteSha")]
