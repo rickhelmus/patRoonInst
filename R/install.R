@@ -1,14 +1,13 @@
 #' @include install-PD.R
 NULL
 
-doInstall <- function(action, pkgs, ignorePkgs, origin, libPaths, allDeps, ask)
+doInstall <- function(action, pkgs, ignorePkgs, origin, libPaths, allDeps, ask, force)
 {
-    # UNDONE: clean option to be used with sync
+    # UNDONE: clean option to be used with sync --> purge() function
     # UNDONE: check args (checkmate?)
     # UNDONE: doc "big" option for ignorePkgs
     # UNDONE: doc that allDeps doesn't work with pkgs/ignorePkgs (also verify args for this)
     # UNDONE: check compatibility
-    # UNDONE: force argument?
 
     lp <- NULL
     if (!is.null(libPaths))
@@ -77,18 +76,23 @@ doInstall <- function(action, pkgs, ignorePkgs, origin, libPaths, allDeps, ask)
         considerPackages <- merge(considerPackages, availPackages, by = "Package", all.x = TRUE, all.y = allDeps, suffix = c(".inst", ".avail"))
     }
 
-    shouldInstall <- function(pkgs) is.na(pkgs$Version.inst) & is.na(pkgs$RemoteSha.inst)
-    shouldUpdate <- if (action == "update")
-        function(pkgs) is.na(pkgs$RemoteSha.avail) & pkgs$Version.inst < pkgs$Version.avail
+    if (force)
+        considerPackages$action <- "force" # just install everything
     else
-        function(pkgs) is.na(pkgs$RemoteSha.avail) & pkgs$Version.inst != pkgs$Version.avail
-    shouldGHSync <- function(pkgs) !is.na(pkgs$RemoteSha.avail) & (is.na(pkgs$RemoteSha.inst) | pkgs$RemoteSha.inst != pkgs$RemoteSha.avail)
-
-    considerPackages[shouldInstall(considerPackages), "action"] <- "install"
-    if (action != "install")
     {
-        considerPackages[is.na(considerPackages$action) & shouldUpdate(considerPackages), "action"] <- action # update/sync
-        considerPackages[is.na(considerPackages$action) & shouldGHSync(considerPackages), "action"] <- "sync"
+        shouldInstall <- function(pkgs) is.na(pkgs$Version.inst) & is.na(pkgs$RemoteSha.inst)
+        shouldUpdate <- if (action == "update")
+            function(pkgs) is.na(pkgs$RemoteSha.avail) & pkgs$Version.inst < pkgs$Version.avail
+        else
+            function(pkgs) is.na(pkgs$RemoteSha.avail) & pkgs$Version.inst != pkgs$Version.avail
+        shouldGHSync <- function(pkgs) !is.na(pkgs$RemoteSha.avail) & (is.na(pkgs$RemoteSha.inst) | pkgs$RemoteSha.inst != pkgs$RemoteSha.avail)
+
+        considerPackages[shouldInstall(considerPackages), "action"] <- "install"
+        if (action != "install")
+        {
+            considerPackages[is.na(considerPackages$action) & shouldUpdate(considerPackages), "action"] <- action # update/sync
+            considerPackages[is.na(considerPackages$action) & shouldGHSync(considerPackages), "action"] <- "sync"
+        }
     }
 
     considerPackages <- considerPackages[!is.na(considerPackages$action), ]
@@ -106,6 +110,7 @@ doInstall <- function(action, pkgs, ignorePkgs, origin, libPaths, allDeps, ask)
             printf("The following %d packages will be %s: %s\n", length(whpkgs), what, paste0(whpkgs, collapse = ", "))
     }
 
+    printActions("installed (forced)", "force")
     printActions("installed", "install")
     printActions("updated", "update")
     printActions("synchronized", "sync")
