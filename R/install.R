@@ -1,13 +1,23 @@
 #' @include install-PD.R
 NULL
 
-doInstall <- function(action, pkgs, ignorePkgs, origin, libPaths, allDeps, ask, force)
+doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, force)
 {
     # UNDONE: clean option to be used with sync --> purge() function
-    # UNDONE: check args (checkmate?)
     # UNDONE: doc "big" option for ignorePkgs
     # UNDONE: doc that allDeps doesn't work with pkgs/ignorePkgs (also verify args for this)
     # UNDONE: check compatibility
+
+    ac <- checkmate::makeAssertCollection()
+    checkmate::assertChoice(action, c("install", "update", "sync"), add = ac)
+    checkmate::assertChoice(origin, c("patRoonDeps", "runiverse", "regular"), add = ac)
+    checkmate::assertCharacter(pkgs, null.ok = TRUE, min.chars = 1, any.missing = FALSE, min.len = 1, add = ac)
+    checkmate::assertCharacter(ignorePgs, null.ok = TRUE, min.chars = 1, any.missing = FALSE, add = ac)
+    checkmate::assertCharacter(libPaths, null.ok = TRUE, min.chars = 1, min.len = 1, any.missing = FALSE, add = ac)
+    checkmate::assertFlag(allDeps, add = ac)
+    checkmate::assertFlag(ask, add = ac)
+    checkmate::assertFlag(force, add = ac)
+    checkmate::reportAssertions(ac)
 
     lp <- NULL
     if (!is.null(libPaths))
