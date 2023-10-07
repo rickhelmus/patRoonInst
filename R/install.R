@@ -7,6 +7,9 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
     # UNDONE: doc "big" option for ignorePkgs
     # UNDONE: doc that allDeps doesn't work with pkgs/ignorePkgs (also verify args for this)
 
+    if (is.null(origin))
+        origin <- if (getOS() == "windows") "patRoonDeps" else "runiverse" # UNDONE: doc
+
     ac <- checkmate::makeAssertCollection()
     checkmate::assertChoice(action, c("install", "update", "sync"), add = ac)
     checkmate::assertChoice(origin, c("patRoonDeps", "runiverse", "regular"), add = ac)
@@ -138,6 +141,32 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
 }
 
 #' @export
-install <- function(lib.loc = NULL, pkgs = "all", origin = NULL, reposPD = "https://rickhelmus.github.io/patRoonDeps")
+install <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, libPaths = NULL, allDeps = FALSE, ask = TRUE,
+                    force = FALSE)
 {
+    doInstall(action = "install", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, libPaths = libPaths,
+              allDeps = allDeps, ask = ask, force = force)
+}
+
+#' @export
+update <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, libPaths = NULL, allDeps = FALSE, ask = TRUE,
+                   force = FALSE)
+{
+    doInstall(action = "update", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, libPaths = libPaths,
+              allDeps = allDeps, ask = ask, force = force)
+}
+
+#' @export
+sync <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, libPaths = NULL, allDeps = FALSE, ask = TRUE,
+                 force = FALSE)
+{
+    doInstall(action = "sync", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, libPaths = libPaths,
+              allDeps = allDeps, ask = ask, force = force)
+}
+
+#' @export
+purge <- function(libPaths = NULL, ask = TRUE)
+{
+    repi <- getPDRepInfo()
+    # UNDONE...
 }

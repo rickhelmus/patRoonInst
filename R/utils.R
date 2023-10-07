@@ -2,6 +2,8 @@ printf <- function(...) cat(sprintf(...), sep = "")
 
 getMyRDepsVersion <- function() 1
 
+thisRVersion <- function() paste(R.Version()$major, floor(as.numeric(R.Version()$minor)), sep = ".")
+
 downloadFile <- function(url, dest)
 {
     # increase timeout for large files, thanks to https://stackoverflow.com/a/68944877
@@ -46,4 +48,13 @@ patRoonRepos <- function(which)
     if (is.null(ret))
         stop(sprintf("Cannot use %s repos: the '%s' option is unset", which, opt), call. = FALSE)
     return(ret)
+}
+
+getPDRepInfo <- function()
+{
+    f <- tempfile(fileext = ".tsv")
+    downloadFile(paste0(patRoonRepos("patRoonDeps"), sprintf("/patRoonDeps-%s.tsv", thisRVersion())), f)
+    ri <- read.csv(f, sep = "\t", colClasses = "character")
+    ri$RemoteSha[!nzchar(ri$RemoteSha)] <- NA_character_ # normalize with installed.packages
+    return(ri)
 }
