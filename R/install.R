@@ -6,13 +6,12 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
     # UNDONE: clean option to be used with sync --> purge() function
     # UNDONE: doc "big" option for ignorePkgs
     # UNDONE: doc that allDeps doesn't work with pkgs/ignorePkgs (also verify args for this)
-    # UNDONE: check compatibility
 
     ac <- checkmate::makeAssertCollection()
     checkmate::assertChoice(action, c("install", "update", "sync"), add = ac)
     checkmate::assertChoice(origin, c("patRoonDeps", "runiverse", "regular"), add = ac)
     checkmate::assertCharacter(pkgs, null.ok = TRUE, min.chars = 1, any.missing = FALSE, min.len = 1, add = ac)
-    checkmate::assertCharacter(ignorePgs, null.ok = TRUE, min.chars = 1, any.missing = FALSE, add = ac)
+    checkmate::assertCharacter(ignorePkgs, null.ok = TRUE, min.chars = 1, any.missing = FALSE, add = ac)
     checkmate::assertCharacter(libPaths, null.ok = TRUE, min.chars = 1, min.len = 1, any.missing = FALSE, add = ac)
     checkmate::assertFlag(allDeps, add = ac)
     checkmate::assertFlag(ask, add = ac)
@@ -36,6 +35,13 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
     downloadFile(paste0(patRoonRepos("patRoonDeps"), "/utils/Rdeps.R"), rdpath)
     rdenv <- new.env()
     source(rdpath, local = rdenv)
+
+    if (!rdenv$checkRDepsVersion(getMyRDepsVersion()))
+    {
+        stop("The installed patRoonInst versions appears out of date. Please update the package. ",
+             "See the patRoon handbook for more details.", call. = FALSE)
+    }
+
     directDeps <- rdenv$getRDependencies("master", getOS(), withInternal = FALSE, flatten = TRUE)
 
     checkPkgs <- function(p)

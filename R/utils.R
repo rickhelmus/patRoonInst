@@ -1,5 +1,7 @@
 printf <- function(...) cat(sprintf(...), sep = "")
 
+getMyRDepsVersion <- function() 1
+
 downloadFile <- function(url, dest)
 {
     # increase timeout for large files, thanks to https://stackoverflow.com/a/68944877
