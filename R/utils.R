@@ -19,6 +19,11 @@ getOS <- function() switch(Sys.info()[["sysname"]], Windows = "windows", Linux =
 
 getAvailablePackages <- function(...) as.data.frame(available.packages(...))[, c("Package", "Version")]
 
+getInstalledPackages <- function(lib.loc)
+{
+    return(as.data.frame(installed.packages(lib.loc = lib.loc, fields = "RemoteSha")[, c("Package", "Version", "RemoteSha")]))
+}
+
 getGHRepos <- function(dep, md)
 {
     repos <- if (!is.null(md[["repos"]])) md$repos else dep
@@ -48,6 +53,24 @@ patRoonRepos <- function(which)
     if (is.null(ret))
         stop(sprintf("Cannot use %s repos: the '%s' option is unset", which, opt), call. = FALSE)
     return(ret)
+}
+
+getDirectDeps <- function()
+{
+    # UNDONE: cache this?
+    printf("Downloading dependency file\n")
+    rdpath <- tempfile(fileext = ".R")
+    downloadFile(paste0(patRoonRepos("patRoonDeps"), "/utils/Rdeps.R"), rdpath)
+    rdenv <- new.env()
+    source(rdpath, local = rdenv)
+
+    if (!rdenv$checkRDepsVersion(getMyRDepsVersion()))
+    {
+        stop("The installed patRoonInst versions appears out of date. Please update the package. ",
+             "See the patRoon handbook for more details.", call. = FALSE)
+    }
+
+    return(rdenv$getRDependencies("master", getOS(), withInternal = FALSE, flatten = TRUE))
 }
 
 getPDRepInfo <- function()

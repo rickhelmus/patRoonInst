@@ -32,20 +32,7 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
         .libPaths(libPaths, include.site = FALSE)
     }
 
-    # UNDONE: cache this?
-    printf("Downloading dependency file\n")
-    rdpath <- tempfile(fileext = ".R")
-    downloadFile(paste0(patRoonRepos("patRoonDeps"), "/utils/Rdeps.R"), rdpath)
-    rdenv <- new.env()
-    source(rdpath, local = rdenv)
-
-    if (!rdenv$checkRDepsVersion(getMyRDepsVersion()))
-    {
-        stop("The installed patRoonInst versions appears out of date. Please update the package. ",
-             "See the patRoon handbook for more details.", call. = FALSE)
-    }
-
-    directDeps <- rdenv$getRDependencies("master", getOS(), withInternal = FALSE, flatten = TRUE)
+    directDeps <- getDirectDeps()
 
     checkPkgs <- function(p)
     {
@@ -74,8 +61,7 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
     }
 
     # set lib.loc here as otherwise installed.packages() includes the default library (see comment above)
-    instPackages <- installed.packages(lib.loc = libPaths, fields = "RemoteSha")[, c("Package", "Version", "RemoteSha")]
-    instPackages <- as.data.frame(instPackages)
+    instPackages <- getInstalledPackages(libPaths)
 
     backend <- switch(origin,
                       patRoonDeps = installPD$new(),
@@ -162,11 +148,4 @@ sync <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, libPaths = NULL,
 {
     doInstall(action = "sync", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, libPaths = libPaths,
               allDeps = allDeps, ask = ask, quiet = quiet)
-}
-
-#' @export
-purge <- function(libPaths = NULL, ask = TRUE)
-{
-    repi <- getPDRepInfo()
-    # UNDONE...
 }
