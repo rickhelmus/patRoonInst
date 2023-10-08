@@ -1,6 +1,7 @@
-#' @export
 purge <- function(libPath = NULL, ask = TRUE)
 {
+    # UNDONE: do we want this function? For now leave it (unexported)
+
     ac <- checkmate::makeAssertCollection()
     checkmate::assertString(libPath, null.ok = TRUE, min.chars = 1, add = ac)
     checkmate::assertFlag(ask, add = ac)
