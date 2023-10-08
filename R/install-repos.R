@@ -16,11 +16,11 @@ installRepos$methods(
         return(ret)
     },
 
-    install = function(pkgs, ...)
+    install = function(pkgs, directDeps, quiet)
     {
         pkgsInRepos <- pkgs[pkgs$Package %in% reposInfo$Package, ]
 
-        instArgs <- list(repos = patRoonRepos(reposName), quiet = TRUE)
+        instArgs <- list(repos = patRoonRepos(reposName), quiet = quiet)
         if (binaryOnly)
             instArgs <- c(instArgs, type = "binary")
 
@@ -32,6 +32,6 @@ installRepos$methods(
 
         otherPkgs <- pkgs[!pkgs$Package %in% reposInfo$Package, ]
         if (nrow(otherPkgs) > 0)
-            callSuper(pkgs = otherPkgs, ...)
+            callSuper(pkgs = otherPkgs, directDeps = directDeps, quiet = quiet)
     }
 )

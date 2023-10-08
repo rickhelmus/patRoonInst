@@ -1,7 +1,7 @@
 #' @include install-PD.R
 NULL
 
-doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, force)
+doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, force, quiet)
 {
     # UNDONE: clean option to be used with sync --> purge() function
     # UNDONE: doc "big" option for ignorePkgs
@@ -19,6 +19,7 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
     checkmate::assertFlag(allDeps, add = ac)
     checkmate::assertFlag(ask, add = ac)
     checkmate::assertFlag(force, add = ac)
+    checkmate::assertFlag(quiet, add = ac)
     checkmate::reportAssertions(ac)
 
     lp <- NULL
@@ -135,33 +136,33 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
     printActions("synchronized", "sync")
 
     if (!ask || askProceed())
-        backend$install(considerPackages, directDeps)
+        backend$install(considerPackages, directDeps, quiet)
 
     invisible(NULL)
 }
 
 #' @export
 install <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, libPaths = NULL, allDeps = FALSE, ask = TRUE,
-                    force = FALSE)
+                    force = FALSE, quiet = TRUE)
 {
     doInstall(action = "install", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, libPaths = libPaths,
-              allDeps = allDeps, ask = ask, force = force)
+              allDeps = allDeps, ask = ask, force = force, quiet = quiet)
 }
 
 #' @export
 update <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, libPaths = NULL, allDeps = FALSE, ask = TRUE,
-                   force = FALSE)
+                   quiet = TRUE)
 {
     doInstall(action = "update", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, libPaths = libPaths,
-              allDeps = allDeps, ask = ask, force = force)
+              allDeps = allDeps, ask = ask, force = FALSE, quiet = quiet)
 }
 
 #' @export
 sync <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, libPaths = NULL, allDeps = FALSE, ask = TRUE,
-                 force = FALSE)
+                 quiet = TRUE)
 {
     doInstall(action = "sync", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, libPaths = libPaths,
-              allDeps = allDeps, ask = ask, force = force)
+              allDeps = allDeps, ask = ask, force = FALSE, quiet = quiet)
 }
 
 #' @export
