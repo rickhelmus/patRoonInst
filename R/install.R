@@ -72,13 +72,17 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
     # set rownames to simplify things
     rownames(instPackages) <- instPackages$Package; rownames(availPackages) <- availPackages$Package
 
-    considerPackages <- if (allDeps) # UNDONE: limit to patRoonDeps?
-        merge(instPackages, availPackages, by = "Package", all.y = TRUE, suffix = c(".inst", ".avail"))
+    if (allDeps) # UNDONE: limit to patRoonDeps?
+    {
+        considerPackages <- merge(instPackages, availPackages, by = "Package", all.y = TRUE,
+                                  suffix = c(".inst", ".avail"), sort = FALSE)
+    }
     else
     {
         considerPackages <- data.frame(Package = names(directDeps))
-        considerPackages <- merge(considerPackages, instPackages, by = "Package", all.x = TRUE)
-        considerPackages <- merge(considerPackages, availPackages, by = "Package", all.x = TRUE, all.y = allDeps, suffix = c(".inst", ".avail"))
+        considerPackages <- merge(considerPackages, instPackages, by = "Package", all.x = TRUE, sort = FALSE)
+        considerPackages <- merge(considerPackages, availPackages, by = "Package", all.x = TRUE, all.y = allDeps,
+                                  suffix = c(".inst", ".avail"), sort = FALSE)
     }
 
     if (action == "force")
