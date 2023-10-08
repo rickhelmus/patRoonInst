@@ -49,7 +49,7 @@ installMain$methods(
                 installMsg(pkgn, "GitHub")
                 dd <- directDeps[[pkgn]]
                 remotes::install_github(getGHRepos(pkgn, dd), ref = getGHRef(dd), subdir = dd[["subdir"]],
-                                        upgrade = "never", force = TRUE, quiet = TRUE)
+                                        upgrade = "never", force = TRUE, quiet = FALSE) # UNDONE: make quiet optional
             }
         }
     }
