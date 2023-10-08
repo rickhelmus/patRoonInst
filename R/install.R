@@ -1,7 +1,7 @@
 #' @include install-PD.R
 NULL
 
-doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, force, quiet)
+doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, quiet)
 {
     # UNDONE: clean option to be used with sync --> purge() function
     # UNDONE: doc "big" option for ignorePkgs
@@ -11,14 +11,13 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
         origin <- if (getOS() == "windows") "patRoonDeps" else "runiverse" # UNDONE: doc
 
     ac <- checkmate::makeAssertCollection()
-    checkmate::assertChoice(action, c("install", "update", "sync"), add = ac)
+    checkmate::assertChoice(action, c("install", "force", "update", "sync"), add = ac)
     checkmate::assertChoice(origin, c("patRoonDeps", "runiverse", "regular"), add = ac)
     checkmate::assertCharacter(pkgs, null.ok = TRUE, min.chars = 1, any.missing = FALSE, min.len = 1, add = ac)
     checkmate::assertCharacter(ignorePkgs, null.ok = TRUE, min.chars = 1, any.missing = FALSE, add = ac)
     checkmate::assertCharacter(libPaths, null.ok = TRUE, min.chars = 1, min.len = 1, any.missing = FALSE, add = ac)
     checkmate::assertFlag(allDeps, add = ac)
     checkmate::assertFlag(ask, add = ac)
-    checkmate::assertFlag(force, add = ac)
     checkmate::assertFlag(quiet, add = ac)
     checkmate::reportAssertions(ac)
 
@@ -96,7 +95,7 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
         considerPackages <- merge(considerPackages, availPackages, by = "Package", all.x = TRUE, all.y = allDeps, suffix = c(".inst", ".avail"))
     }
 
-    if (force)
+    if (action == "force")
         considerPackages$action <- "force" # just install everything
     else
     {
@@ -145,8 +144,8 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
 install <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, libPaths = NULL, allDeps = FALSE, ask = TRUE,
                     force = FALSE, quiet = TRUE)
 {
-    doInstall(action = "install", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, libPaths = libPaths,
-              allDeps = allDeps, ask = ask, force = force, quiet = quiet)
+    doInstall(action = if (force) "force" else "install", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs,
+              libPaths = libPaths, allDeps = allDeps, ask = ask, quiet = quiet)
 }
 
 #' @export
@@ -154,7 +153,7 @@ update <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, libPaths = NUL
                    quiet = TRUE)
 {
     doInstall(action = "update", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, libPaths = libPaths,
-              allDeps = allDeps, ask = ask, force = FALSE, quiet = quiet)
+              allDeps = allDeps, ask = ask, quiet = quiet)
 }
 
 #' @export
@@ -162,7 +161,7 @@ sync <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, libPaths = NULL,
                  quiet = TRUE)
 {
     doInstall(action = "sync", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, libPaths = libPaths,
-              allDeps = allDeps, ask = ask, force = FALSE, quiet = quiet)
+              allDeps = allDeps, ask = ask, quiet = quiet)
 }
 
 #' @export
