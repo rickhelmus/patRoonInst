@@ -80,7 +80,7 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
     # set rownames to simplify things
     rownames(instPackages) <- instPackages$Package; rownames(availPackages) <- availPackages$Package
 
-    if (allDeps) # UNDONE: limit to patRoonDeps?
+    if (allDeps)
     {
         considerPackages <- merge(instPackages, availPackages, by = "Package", all.y = TRUE,
                                   suffix = c(".inst", ".avail"), sort = FALSE)

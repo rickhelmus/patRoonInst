@@ -1,6 +1,6 @@
 Package: patRoonInst
 Type: Package
-Title: Manages patRoon Installations
+Title: Manages 'patRoon' Installations
 Version: 1.0.0
 Author: Rick Helmus
 Maintainer: Rick Helmus <r.helmus@uva.nl>
