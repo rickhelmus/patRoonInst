@@ -3,9 +3,8 @@ NULL
 
 doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, quiet)
 {
-    # UNDONE: clean option to be used with sync --> purge() function
     # UNDONE: doc "big" option for ignorePkgs
-    # UNDONE: doc that allDeps doesn't work with pkgs/ignorePkgs (also verify args for this)
+    # UNDONE: doc that allDeps doesn't work with pkgs/ignorePkgs and only with patRoonDeps
 
     if (is.null(origin))
         origin <- if (getOS() == "windows") "patRoonDeps" else "runiverse" # UNDONE: doc
@@ -20,6 +19,14 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
     checkmate::assertFlag(ask, add = ac)
     checkmate::assertFlag(quiet, add = ac)
     checkmate::reportAssertions(ac)
+
+    if (allDeps)
+    {
+        if (!is.null(pkgs) || !is.null(ignorePkgs))
+            stop("Cannot combine allDeps=TRUE with pkgs/ignorePkgs", call. = FALSE)
+        if (origin != "patRoonDeps")
+            stop("allDeps=TRUE currently only works with origin=\"patRoonDeps\"", call. = FALSE)
+    }
 
     lp <- NULL
     if (!is.null(libPaths))
