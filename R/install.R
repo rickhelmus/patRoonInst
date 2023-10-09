@@ -1,13 +1,37 @@
 #' @include install-PD.R
 NULL
 
+#' Managing \pkg{patRoon} installations
+#'
+#' Functions to install, update and synchronize \pkg{patRoon} and its dependencies from various repositories.
+#'
+#' Details here:
+#'
+#' * Explain functions
+#' * Explain origins
+#'
+#' @param origin Where \pkg{patRoon} and its dependencies are installed from. Valid values are: `"patRoonDeps"`,
+#'   `"runiverse"`, `"regular"`. If `NULL` then the default on Windows is `"patRoonDeps"` and `"runiverse"` otherwise.
+#'   See below for more details.
+#' @param pkgs A `character` vector with a subset of packages to process. If `NULL` then all packages are considered.
+#' @param ignorePkgs A `character` vector with packages that will not be considered. Can also be `"big"` to exclude
+#'   large packages (_e.g._ \pkg{patRoonDeps}). If `NULL` then no packages will be ignored.
+#' @param lib.loc The path to the \R library where packages will be installed. Set to `NULL` for the default \R library.
+#' @param allDeps Consider _all_ dependencies, including recursive dependencies. This is mainly useful for `sync()`.
+#'   Currently only supported for `origin="patRoonDeps"` and when `pkgs`/`ignorePkgs` are both `NULL`.
+#' @param ask Set to `TRUE` to ask before proceeding package installations. No effect on non-interactive \R sessions.
+#' @param force If `TRUE` then packages will _always_ be installed, even if already present and with the correct
+#'   version.
+#' @param quiet If `TRUE` the installations are performed more quietly (sets the `quiet` option to
+#'   [install.packages()]).
+#'
+#' @name installing
+NULL
+
 doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, quiet)
 {
-    # UNDONE: doc "big" option for ignorePkgs
-    # UNDONE: doc that allDeps doesn't work with pkgs/ignorePkgs and only with patRoonDeps
-
     if (is.null(origin))
-        origin <- if (getOS() == "windows") "patRoonDeps" else "runiverse" # UNDONE: doc
+        origin <- if (getOS() == "windows") "patRoonDeps" else "runiverse"
 
     ac <- checkmate::makeAssertCollection()
     checkmate::assertChoice(action, c("install", "force", "update", "sync"), add = ac)
@@ -138,6 +162,7 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
     invisible(NULL)
 }
 
+#' @rdname installing
 #' @export
 install <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL, allDeps = FALSE, ask = TRUE,
                     force = FALSE, quiet = TRUE)
@@ -146,6 +171,7 @@ install <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NUL
               lib.loc = lib.loc, allDeps = allDeps, ask = ask, quiet = quiet)
 }
 
+#' @rdname installing
 #' @export
 update <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL, allDeps = FALSE, ask = TRUE,
                    quiet = TRUE)
@@ -154,6 +180,7 @@ update <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL
               allDeps = allDeps, ask = ask, quiet = quiet)
 }
 
+#' @rdname installing
 #' @export
 sync <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL, allDeps = FALSE, ask = TRUE,
                  quiet = TRUE)
