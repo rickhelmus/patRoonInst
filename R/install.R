@@ -1,7 +1,7 @@
 #' @include install-PD.R
 NULL
 
-doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, quiet)
+doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, quiet)
 {
     # UNDONE: doc "big" option for ignorePkgs
     # UNDONE: doc that allDeps doesn't work with pkgs/ignorePkgs and only with patRoonDeps
@@ -14,7 +14,8 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
     checkmate::assertChoice(origin, c("patRoonDeps", "runiverse", "regular"), add = ac)
     checkmate::assertCharacter(pkgs, null.ok = TRUE, min.chars = 1, any.missing = FALSE, min.len = 1, add = ac)
     checkmate::assertCharacter(ignorePkgs, null.ok = TRUE, min.chars = 1, any.missing = FALSE, add = ac)
-    checkmate::assertCharacter(libPaths, null.ok = TRUE, min.chars = 1, min.len = 1, any.missing = FALSE, add = ac)
+    if (!is.null(lib.loc))
+        checkmate::assertDirectoryExists(lib.loc, access = "w", add = ac)
     checkmate::assertFlag(allDeps, add = ac)
     checkmate::assertFlag(ask, add = ac)
     checkmate::assertFlag(quiet, add = ac)
@@ -29,14 +30,14 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
     }
 
     lp <- NULL
-    if (!is.null(libPaths))
+    if (!is.null(lib.loc))
     {
         # NOTE: .libPaths() is set here to prevent install.packages() (and derived functions) from looking for
         # dependencies outside the target library. Unfortunately, this won't remove the default library (ie .Library)
         # from the search path, but this library is often static
         lp <- .libPaths()
         on.exit(.libPaths(lp), add = TRUE)
-        .libPaths(libPaths, include.site = FALSE)
+        .libPaths(lib.loc, include.site = FALSE)
     }
 
     directDeps <- getDirectDeps()
@@ -68,7 +69,7 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
     }
 
     # set lib.loc here as otherwise installed.packages() includes the default library (see comment above)
-    instPackages <- getInstalledPackages(libPaths)
+    instPackages <- getInstalledPackages(lib.loc)
 
     backend <- switch(origin,
                       patRoonDeps = installPD$new(),
@@ -138,25 +139,25 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, libPaths, allDeps, ask, 
 }
 
 #' @export
-install <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, libPaths = NULL, allDeps = FALSE, ask = TRUE,
+install <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL, allDeps = FALSE, ask = TRUE,
                     force = FALSE, quiet = TRUE)
 {
     doInstall(action = if (force) "force" else "install", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs,
-              libPaths = libPaths, allDeps = allDeps, ask = ask, quiet = quiet)
+              lib.loc = lib.loc, allDeps = allDeps, ask = ask, quiet = quiet)
 }
 
 #' @export
-update <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, libPaths = NULL, allDeps = FALSE, ask = TRUE,
+update <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL, allDeps = FALSE, ask = TRUE,
                    quiet = TRUE)
 {
-    doInstall(action = "update", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, libPaths = libPaths,
+    doInstall(action = "update", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, lib.loc = lib.loc,
               allDeps = allDeps, ask = ask, quiet = quiet)
 }
 
 #' @export
-sync <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, libPaths = NULL, allDeps = FALSE, ask = TRUE,
+sync <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL, allDeps = FALSE, ask = TRUE,
                  quiet = TRUE)
 {
-    doInstall(action = "sync", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, libPaths = libPaths,
+    doInstall(action = "sync", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, lib.loc = lib.loc,
               allDeps = allDeps, ask = ask, quiet = quiet)
 }
