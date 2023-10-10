@@ -10,6 +10,7 @@ installPD$methods(
             if (nrow(available.packages(repos = patRoonRepos("patRoonDeps"), type = "binary")) == 0)
                 stop("patRoonDeps is not supported for this Operating System and/or R version", call. = FALSE)
         })
-        callSuper(..., reposInfo = getPDRepInfo(), reposName = "patRoonDeps", binaryOnly = TRUE)
+        callSuper(..., reposInfo = getPDRepInfo(), reposName = "patRoonDeps", reposIsExclusive = TRUE,
+                  binaryOnly = TRUE)
     }
 )

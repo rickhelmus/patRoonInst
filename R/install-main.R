@@ -42,7 +42,7 @@ installMain$methods(
             if (is.na(pkgs$RemoteSha.avail[i]))
             {
                 installMsg(pkgn, "CRAN/BioConductor")
-                BiocManager::install(pkgn, update = FALSE, ask = FALSE, force = TRUE)
+                BiocManager::install(pkgn, update = FALSE, ask = FALSE, force = TRUE, quiet = quiet)
             }
             else
             {

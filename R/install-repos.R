@@ -2,10 +2,14 @@
 NULL
 
 installRepos <- setRefClass("installRepos", contains = c("installMain", "VIRTUAL"),
-                            fields = list(reposInfo = "data.frame", reposName = "character", binaryOnly = "logical"))
+                            fields = list(reposInfo = "data.frame", reposName = "character",
+                                          reposIsExclusive = "logical", binaryOnly = "logical"))
 
 installRepos$methods(
-    initialize = function(binaryOnly = FALSE, ...) callSuper(binaryOnly = binaryOnly, ...),
+    initialize = function(reposIsExclusive, binaryOnly = FALSE, ...)
+    {
+        callSuper(reposIsExclusive = reposIsExclusive, binaryOnly = binaryOnly, ...)
+    },
 
     availablePackages = function(directDeps)
     {
@@ -20,14 +24,27 @@ installRepos$methods(
     {
         pkgsInRepos <- pkgs[pkgs$Package %in% reposInfo$Package, ]
 
-        instArgs <- list(repos = patRoonRepos(reposName), quiet = quiet)
+        instFunc <- if (reposIsExclusive)
+            utils::install.packages
+        else
+            BiocManager::install # use BiocManager, so deps from BioC (and CRAN) can also be installed
+
+        instArgs <- list(quiet = quiet)
+        if (reposIsExclusive)
+            instArgs$repos <- patRoonRepos(reposName)
+        else
+        {
+            instArgs <- c(instArgs, list(site_repository = patRoonRepos(reposName), update = FALSE, ask = FALSE,
+                                         force = TRUE))
+        }
+
         if (binaryOnly)
-            instArgs <- c(instArgs, type = "binary")
+            instArgs <- c(instArgs, list(type = "binary"))
 
         for (pkg in pkgsInRepos$Package)
         {
             installMsg(pkg, reposName)
-            do.call(utils::install.packages, c(list(pkg), instArgs))
+            do.call(instFunc, c(list(pkg), instArgs))
         }
 
         otherPkgs <- pkgs[!pkgs$Package %in% reposInfo$Package, ]
