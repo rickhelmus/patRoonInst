@@ -59,6 +59,7 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
         # NOTE: .libPaths() is set here to prevent install.packages() (and derived functions) from looking for
         # dependencies outside the target library. Unfortunately, this won't remove the default library (ie .Library)
         # from the search path, but this library is often static
+        # NOTE: withr is not used here since it cannot set include.site=FALSE
         lp <- .libPaths()
         on.exit(.libPaths(lp), add = TRUE)
         .libPaths(lib.loc, include.site = FALSE)

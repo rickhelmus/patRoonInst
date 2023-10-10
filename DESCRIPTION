@@ -18,7 +18,8 @@ Imports:
     checkmate,
     jsonlite,
     remotes,
-    BiocManager
+    BiocManager,
+    withr
 Collate: 
     'install-main.R'
     'install-repos.R'

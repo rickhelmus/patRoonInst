@@ -7,9 +7,7 @@ thisRVersion <- function() paste(R.Version()$major, floor(as.numeric(R.Version()
 downloadFile <- function(url, dest)
 {
     # increase timeout for large files, thanks to https://stackoverflow.com/a/68944877
-    otimeout <- getOption("timeout")
-    options(timeout = max(600, otimeout))
-    on.exit(options(timeout = otimeout), add = TRUE)
+    withr::local_options(list(timeout = max(600, getOption("timeout", 0))))
 
     if (download.file(url, dest, mode = "wb") != 0)
         stop(sprintf("Failed to download from '%s'", url), call. = FALSE)
