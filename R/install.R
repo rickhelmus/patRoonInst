@@ -65,6 +65,10 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
         .libPaths(lib.loc, include.site = FALSE)
     }
 
+    # prevent asking to build packages from source if newer is available
+    # UNDONE: make optional?
+    withr::local_options(list(install.packages.compile.from.source = "never"))
+
     directDeps <- getDirectDeps()
 
     checkPkgs <- function(p)
