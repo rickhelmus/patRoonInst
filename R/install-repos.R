@@ -11,7 +11,7 @@ installRepos$methods(
         callSuper(reposIsExclusive = reposIsExclusive, binaryOnly = binaryOnly, ...)
     },
 
-    availablePackages = function(directDeps)
+    packageVersions = function(directDeps)
     {
         ret <- reposInfo
         otherPackages <- directDeps[!names(directDeps) %in% ret$Package]

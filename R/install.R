@@ -104,21 +104,21 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
                       patRoonDeps = installPD$new(),
                       runiverse = installRU$new(),
                       regular = installMain$new())
-    availPackages <- backend$availablePackages(directDeps)
+    pkgVersions <- backend$packageVersions(directDeps)
 
     # set rownames to simplify things
-    rownames(instPackages) <- instPackages$Package; rownames(availPackages) <- availPackages$Package
+    rownames(instPackages) <- instPackages$Package; rownames(pkgVersions) <- pkgVersions$Package
 
     if (allDeps)
     {
-        considerPackages <- merge(instPackages, availPackages, by = "Package", all.y = TRUE,
+        considerPackages <- merge(instPackages, pkgVersions, by = "Package", all.y = TRUE,
                                   suffix = c(".inst", ".avail"), sort = FALSE)
     }
     else
     {
         considerPackages <- data.frame(Package = names(directDeps))
         considerPackages <- merge(considerPackages, instPackages, by = "Package", all.x = TRUE, sort = FALSE)
-        considerPackages <- merge(considerPackages, availPackages, by = "Package", all.x = TRUE, all.y = allDeps,
+        considerPackages <- merge(considerPackages, pkgVersions, by = "Package", all.x = TRUE, all.y = allDeps,
                                   suffix = c(".inst", ".avail"), sort = FALSE)
     }
 

@@ -4,7 +4,7 @@ NULL
 installMain <- setRefClass("installMain")
 
 installMain$methods(
-    availablePackages = function(directDeps)
+    packageVersions = function(directDeps)
     {
         avail <- getAvailablePackages(repos = BiocManager::repositories())
         avail <- avail[avail$Package %in% names(directDeps), ]
