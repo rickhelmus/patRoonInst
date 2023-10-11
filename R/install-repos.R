@@ -20,6 +20,20 @@ installRepos$methods(
         return(ret)
     },
 
+    availablePackages = function()
+    {
+        myAvail <- if (binaryOnly)
+            getAvailablePackages(repos = patRoonRepos(reposName), type = "binary")
+        else
+            getAvailablePackages(repos = patRoonRepos(reposName))
+        if (reposIsExclusive)
+            return(myAvail)
+
+        otherAvail <- callSuper()
+        otherAvail <- otherAvail[!otherAvail$Package %in% myAvail$Package, ]
+        return(rbind(myAvail, otherAvail))
+    },
+
     install = function(pkgs, directDeps, quiet)
     {
         pkgsInRepos <- pkgs[pkgs$Package %in% reposInfo$Package, ]

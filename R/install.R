@@ -38,7 +38,7 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
     checkmate::assertChoice(origin, c("patRoonDeps", "runiverse", "regular"), add = ac)
     checkmate::assertCharacter(pkgs, null.ok = TRUE, min.chars = 1, any.missing = FALSE, min.len = 1, add = ac)
     checkmate::assertCharacter(ignorePkgs, null.ok = TRUE, min.chars = 1, any.missing = FALSE, add = ac)
-    if (!is.null(lib.loc))
+    if (!is.null(lib.loc) && file.exists(lib.loc))
         checkmate::assertDirectoryExists(lib.loc, access = "w", add = ac)
     checkmate::assertFlag(allDeps, add = ac)
     checkmate::assertFlag(ask, add = ac)
@@ -162,7 +162,28 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
     printActions("synchronized", "sync")
 
     if (!ask || askProceed())
+    {
+        if (!is.null(lib.loc) && !dir.exists(lib.loc))
+        {
+            if (!dir.create(lib.loc, recursive = TRUE))
+                stop("Could not create directory set to lib.loc", call. = FALSE)
+        }
+
         backend$install(considerPackages, directDeps, quiet)
+
+        # verify if all packages and their deps were installed
+        deps <- unique(unlist(tools::package_dependencies(considerPackages$Package, db = backend$availablePackages(),
+                                                          recursive = TRUE)))
+        instPackages <- getInstalledPackages(lib.loc) # update
+        notInstalled <- setdiff(deps, instPackages$Package)
+
+        if (length(notInstalled) > 0)
+        {
+            stop(sprintf("The following %d packages were not installed: %s", length(notInstalled),
+                         paste0(notInstalled, collapse = ", ")),
+                 call. = FALSE)
+        }
+    }
 
     invisible(NULL)
 }

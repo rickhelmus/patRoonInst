@@ -15,7 +15,7 @@ downloadFile <- function(url, dest)
 
 getOS <- function() switch(Sys.info()[["sysname"]], Windows = "windows", Linux = "linux", Darwin = "osx")
 
-getAvailablePackages <- function(...) as.data.frame(available.packages(...))[, c("Package", "Version")]
+getAvailablePackages <- function(...) as.data.frame(available.packages(...))
 
 getInstalledPackages <- function(lib.loc)
 {

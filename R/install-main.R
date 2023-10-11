@@ -6,7 +6,7 @@ installMain <- setRefClass("installMain")
 installMain$methods(
     packageVersions = function(directDeps)
     {
-        avail <- getAvailablePackages(repos = BiocManager::repositories())
+        avail <- getAvailablePackages(repos = BiocManager::repositories())[, c("Package", "Version")]
         avail <- avail[avail$Package %in% names(directDeps), ]
         avail$RemoteSha <- if (nrow(avail) > 0) NA_character_ else character()
 
@@ -33,6 +33,8 @@ installMain$methods(
 
         return(avail)
     },
+
+    availablePackages = function() getAvailablePackages(repos = BiocManager::repositories()),
 
     install = function(pkgs, directDeps, quiet)
     {
