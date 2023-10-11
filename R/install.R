@@ -174,6 +174,7 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
         # verify if all packages and their deps were installed
         deps <- unique(unlist(tools::package_dependencies(considerPackages$Package, db = backend$availablePackages(),
                                                           recursive = TRUE)))
+        deps <- union(deps, considerPackages$Package)
         instPackages <- getInstalledPackages(lib.loc) # update
         notInstalled <- setdiff(deps, instPackages$Package)
 
