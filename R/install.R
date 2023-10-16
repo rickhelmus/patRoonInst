@@ -5,12 +5,34 @@ NULL
 #'
 #' Functions to install, update and synchronize \pkg{patRoon} and its dependencies from various repositories.
 #'
-#' Details here:
+#' The installation of [patRoon](https://github.com/rickhelmus/patRoon) involves installing several dependencies,
+#' including \R packages not available from common repositories (CRAN, BioConductor) and software outside the \R
+#' environment. The following three functions automate this process and are used to install and maintain \pkg{patRoon}
+#' and its dependencies:
 #'
-#' * Explain functions
-#' * Explain origins
+#' * `install()` Installs \pkg{patRoon} and any missing dependencies.
+#' * `update()` Like `install()` and updates outdated packages.
+#' * `sync()` Like `update()` but may also downgrade packages to fully synchronize package versions with the repository.
 #'
-#' @param origin Where \pkg{patRoon} and its dependencies are installed from. Valid values are: `"patRoonDeps"`,
+#' The \R packages are currently sourced from the following repositories (set by the `origin` argument):
+#'
+#' * `"patRoonDeps"`: a specialized \CRANpkg{miniCRAN} repository contains binary \R packages with versions that are automatically tested with \pkg{patRoon}. Currently this is _only_ supported for Windows.
+#' * `"runiverse"`: an [r-universe](https://rickhelmus.r-universe.dev/builds) repository containing the latest versions of \pkg{patRoon} and its dependencies.
+#' * "regular": the last versions are sourced from regular CRAN/BioConductor repositories and GitHub. The latter means that suitable build tools (_e.g._ [Rtools on windows](https://cran.r-project.org/bin/windows/Rtools/)).
+#'
+#' Note that some large \R packages, currently `patRoonDeps`, `patRoonExt` and `MetaCleanData`, are always sourced
+#' directly from GitHub.
+#'
+#' Synchronization with `sync()` was mainly designed to be used in combination with the `patRoonDeps` repository, since
+#' it contains package versions already tested with `patRoon`. Doing a synchronization is most commonly used with
+#' \pkg{patRoon} bundle installations or when \pkg{patRoon} is installed in a separate \R library (_i.e._ using the
+#' `lib.loc` argument). Furthermore, the `allDeps` argument should be set to `TRUE` to ensure _all_ dependencies are
+#' synchronized.
+#'
+#' Packages that originate from GitHub (even when obtained via `patRoonDeps`/`runiverse`) will _also_ be synchronized
+#' with `update()`, since these packages typically involve 'snapshots' with unreliable version information.
+#'
+#' @param origin Where \pkg{patRoon} and its \R dependencies are installed from. Valid values are: `"patRoonDeps"`,
 #'   `"runiverse"`, `"regular"`. If `NULL` then the default on Windows is `"patRoonDeps"` and `"runiverse"` otherwise.
 #'   See below for more details.
 #' @param pkgs A `character` vector with a subset of packages to process. If `NULL` then all packages are considered.
@@ -23,7 +45,9 @@ NULL
 #' @param force If `TRUE` then packages will _always_ be installed, even if already present and with the correct
 #'   version.
 #' @param quiet If `TRUE` the installations are performed more quietly (sets the `quiet` option to
-#'   [install.packages()]).
+#'   [install.packages()].
+#'
+#' @return All functions return `NULL` invisibly.
 #'
 #' @name installing
 NULL

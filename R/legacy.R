@@ -1,3 +1,36 @@
+#' Manage legacy \pkg{patRoon} installations
+#'
+#' Toggles or removes installations of [patRoon](https://github.com/rickhelmus/patRoon) that were installed by the
+#' legacy installation script (`install_patRoon.R`).
+#'
+#' Previous versions of \pkg{patRoon} (`<2.3`) could be installed _via_ a (now legacy) installation \R script
+#' (`install_patRoon.R`). The functions documented here can (temporarily) undo the changes by this script, so that the
+#' [installation functions in this package][installing] can be used to manage \pkg{patRoon} installations.
+#'
+#' The `toggleLegacy()` function is used to enable or disable legacy installations temporarily.
+#' 
+#' The `removeLegacy()` function is used to undo legacy installations.
+#'
+#' @section Background: This section is purely informative, but may be of use when you want to manually manage legacy
+#'   installations.
+#'   
+#'   The legacy installation script typically results in the following changes:
+#'   
+#'   1. `~/patRoon-install`: a directory with external dependencies (`MetFrag`, `SIRIUS`, ...) and may contain \R packages from the `patRoonDeps` repository depending on user input.
+#'   2. `~/.Rprofile-patRoon.R`: An \R script that should be loaded during \R startup, and initializes the configuration needed to use the files (1).
+#'   3. Code in `~/.Rprofile` to actually load (2) on \R startup (only if it exists)
+#'   
+#'   When `toggleLegacy()` is used to disable legacy installations the function simply renames the initialization script
+#'   (2) so it won't be loaded on \R startup. The `removeLegacy()` function removes the files from (1-2) and optionally
+#'   the changes from (3).
+#'
+#' @note The \R session should be restarted to make the changes effective.
+#'
+#' @return All functions return `NULL` invisibly.
+#'
+#' @name legacy
+NULL
+
 # old patRoon install script leaves the following around:
 # 1 ~/patRoon-install: directory with all R packages from patRoonDeps and external tools (MetFrag, SIRIUS, ...)
 # 2 ~/.Rprofile-patRoon.R: R script that sets up options/paths from (1); sets option patRoon.Rprof=TRUE
@@ -8,6 +41,7 @@
 
 getLegacyDataDir <- function() "~/patRoon-install"
 getLegacyInitScript <- function(dis = FALSE) if (!dis) "~/.Rprofile-patRoon.R" else "~/.Rprofile-patRoon.R-disabled"
+printLegDone <- function() printf("Done! Please restart R to make the changes effective.\n")
 
 inspectLegacyInstall <- function()
 {
@@ -36,6 +70,10 @@ inspectLegacyInstall <- function()
                 RprofPatDisExists = RprofPatDisExists, RprofExists = RprofExists))
 }
 
+#' @param enable Enables (`enable=TRUE`), disables (`enable=FALSE`) or toggles (`enable=NULL`) a legacy \pkg{patRoon}
+#'   installation.
+#' @export
+#' @rdname legacy
 toggleLegacy <- function(enable = NULL)
 {
     insp <- inspectLegacyInstall()
@@ -67,9 +105,15 @@ toggleLegacy <- function(enable = NULL)
     if (askProceed() && !file.rename(src, dest))
         stop("Failed to rename file!", call. = FALSE)
     
+    printLegDone()
+    
     invisible(NULL)
 }
 
+#' @param restoreRProfile If `TRUE` then the modifications to the user's `.Rprofile` file will be removed that were
+#'   automatically performed by the legacy installation script.
+#' @export
+#' @rdname legacy
 removeLegacy <- function(restoreRProfile = FALSE)
 {
     insp <- inspectLegacyInstall()
@@ -120,4 +164,8 @@ removeLegacy <- function(restoreRProfile = FALSE)
     
     if (askProceed() && !all(unlink(rmPaths, recursive = TRUE)))
         stop("Error while deleting files!", call. = FALSE)
+    
+    printLegDone()
+    
+    invisible(NULL)
 }

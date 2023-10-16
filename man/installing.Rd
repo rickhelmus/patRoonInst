@@ -39,7 +39,7 @@ sync(
 )
 }
 \arguments{
-\item{origin}{Where \pkg{patRoon} and its dependencies are installed from. Valid values are: \code{"patRoonDeps"},
+\item{origin}{Where \pkg{patRoon} and its \R dependencies are installed from. Valid values are: \code{"patRoonDeps"},
 \code{"runiverse"}, \code{"regular"}. If \code{NULL} then the default on Windows is \code{"patRoonDeps"} and \code{"runiverse"} otherwise.
 See below for more details.}
 
@@ -59,15 +59,41 @@ Currently only supported for \code{origin="patRoonDeps"} and when \code{pkgs}/\c
 version.}
 
 \item{quiet}{If \code{TRUE} the installations are performed more quietly (sets the \code{quiet} option to
-\code{\link[=install.packages]{install.packages()}}).}
+\code{\link[=install.packages]{install.packages()}}.}
+}
+\value{
+All functions return \code{NULL} invisibly.
 }
 \description{
 Functions to install, update and synchronize \pkg{patRoon} and its dependencies from various repositories.
 }
 \details{
-Details here:
+The installation of \href{https://github.com/rickhelmus/patRoon}{patRoon} involves installing several dependencies,
+including \R packages not available from common repositories (CRAN, BioConductor) and software outside the \R
+environment. The following three functions automate this process and are used to install and maintain \pkg{patRoon}
+and its dependencies:
 \itemize{
-\item Explain functions
-\item Explain origins
+\item \code{install()} Installs \pkg{patRoon} and any missing dependencies.
+\item \code{update()} Like \code{install()} and updates outdated packages.
+\item \code{sync()} Like \code{update()} but may also downgrade packages to fully synchronize package versions with the repository.
 }
+
+The \R packages are currently sourced from the following repositories (set by the \code{origin} argument):
+\itemize{
+\item \code{"patRoonDeps"}: a specialized \CRANpkg{miniCRAN} repository contains binary \R packages with versions that are automatically tested with \pkg{patRoon}. Currently this is \emph{only} supported for Windows.
+\item \code{"runiverse"}: an \href{https://rickhelmus.r-universe.dev/builds}{r-universe} repository containing the latest versions of \pkg{patRoon} and its dependencies.
+\item "regular": the last versions are sourced from regular CRAN/BioConductor repositories and GitHub. The latter means that suitable build tools (\emph{e.g.} \href{https://cran.r-project.org/bin/windows/Rtools/}{Rtools on windows}).
+}
+
+Note that some large \R packages, currently \code{patRoonDeps}, \code{patRoonExt} and \code{MetaCleanData}, are always sourced
+directly from GitHub.
+
+Synchronization with \code{sync()} was mainly designed to be used in combination with the \code{patRoonDeps} repository, since
+it contains package versions already tested with \code{patRoon}. Doing a synchronization is most commonly used with
+\pkg{patRoon} bundle installations or when \pkg{patRoon} is installed in a separate \R library (\emph{i.e.} using the
+\code{lib.loc} argument). Furthermore, the \code{allDeps} argument should be set to \code{TRUE} to ensure \emph{all} dependencies are
+synchronized.
+
+Packages that originate from GitHub (even when obtained via \code{patRoonDeps}/\code{runiverse}) will \emph{also} be synchronized
+with \code{update()}, since these packages typically involve 'snapshots' with unreliable version information.
 }
