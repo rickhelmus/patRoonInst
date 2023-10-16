@@ -26,6 +26,7 @@ Collate:
     'install-PD.R'
     'install-RU.R'
     'install.R'
+    'legacy.R'
     'purge.R'
     'utils.R'
     'zzz.R'
