@@ -16,7 +16,7 @@
 #'   
 #'   The legacy installation script typically results in the following changes:
 #'   
-#'   1. `~/patRoon-install`: a directory with external dependencies (`MetFrag`, `SIRIUS`, ...) and may contain \R packages from the `patRoonDeps` repository depending on user input.
+#'   1. `~/patRoon-install`: a directory with external dependencies (`MetFrag`, `SIRIUS`, ...) and may contain \R packages from the `patRoonDeps` repository depending on user input during the installation.
 #'   2. `~/.Rprofile-patRoon.R`: An \R script that should be loaded during \R startup, and initializes the configuration needed to use the files (1).
 #'   3. Code in `~/.Rprofile` to actually load (2) on \R startup (only if it exists)
 #'   
@@ -30,14 +30,6 @@
 #'
 #' @name legacy
 NULL
-
-# old patRoon install script leaves the following around:
-# 1 ~/patRoon-install: directory with all R packages from patRoonDeps and external tools (MetFrag, SIRIUS, ...)
-# 2 ~/.Rprofile-patRoon.R: R script that sets up options/paths from (1); sets option patRoon.Rprof=TRUE
-# 3 Code in ~/.Rpfrofile to source (2) (only if it exists)
-#
-# For toggling, it is enough to simply rename (2).
-# For a full cleanup we remove (1), (2) and remove the code of (3)
 
 getLegacyDataDir <- function() "~/patRoon-install"
 getLegacyInitScript <- function(dis = FALSE) if (!dis) "~/.Rprofile-patRoon.R" else "~/.Rprofile-patRoon.R-disabled"
@@ -159,7 +151,7 @@ removeLegacy <- function(restoreRProfile = FALSE)
         }
     }
     
-    printf("The legacy installed will be removed by deleting the following files and directories: %s\n",
+    printf("The legacy installation will be removed by deleting the following files and directories: %s\n",
            paste0(rmPaths, collapse = ", "))
     
     if (askProceed() && !all(unlink(rmPaths, recursive = TRUE)))
