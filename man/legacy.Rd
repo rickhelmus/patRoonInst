@@ -42,7 +42,7 @@ installations.
 
 The legacy installation script typically results in the following changes:
 \enumerate{
-\item \verb{~/patRoon-install}: a directory with external dependencies (\code{MetFrag}, \code{SIRIUS}, ...) and may contain \R packages from the \code{patRoonDeps} repository depending on user input.
+\item \verb{~/patRoon-install}: a directory with external dependencies (\code{MetFrag}, \code{SIRIUS}, ...) and may contain \R packages from the \code{patRoonDeps} repository depending on user input during the installation.
 \item \verb{~/.Rprofile-patRoon.R}: An \R script that should be loaded during \R startup, and initializes the configuration needed to use the files (1).
 \item Code in \verb{~/.Rprofile} to actually load (2) on \R startup (only if it exists)
 }
