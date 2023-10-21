@@ -4,8 +4,10 @@ NULL
 installMain <- setRefClass("installMain")
 
 installMain$methods(
-    packageVersions = function(directDeps)
+    packageVersions = function(directDeps, ignorePkgs)
     {
+        directDeps <- directDeps[!names(directDeps) %in% ignorePkgs]
+
         avail <- getAvailablePackages(repos = BiocManager::repositories())[, c("Package", "Version")]
         avail <- avail[avail$Package %in% names(directDeps), ]
         avail$RemoteSha <- if (nrow(avail) > 0) NA_character_ else character()

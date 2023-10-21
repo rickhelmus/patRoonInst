@@ -11,12 +11,20 @@ installRepos$methods(
         callSuper(reposIsExclusive = reposIsExclusive, binaryOnly = binaryOnly, ...)
     },
 
-    packageVersions = function(directDeps)
+    packageVersions = function(directDeps, ignorePkgs, getAll)
     {
-        ret <- reposInfo
-        otherPackages <- directDeps[!names(directDeps) %in% ret$Package]
-        if (length(otherPackages) > 0)
-            ret <- rbind(ret, callSuper(otherPackages))
+        ret <- if (getAll)
+            reposInfo
+        else
+            reposInfo[reposInfo$Package %in% names(directDeps), ]
+        ret <- ret[!ret$Package %in% ignorePkgs, ]
+
+        # get deps from other repos
+        # NOTE: parent methods also check ignorePkgs
+        otherDDeps <- directDeps[!names(directDeps) %in% ret$Package]
+        if (length(otherDDeps) > 0)
+            ret <- rbind(ret, callSuper(otherDDeps, ignorePkgs))
+
         return(ret)
     },
 

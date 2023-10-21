@@ -12,7 +12,6 @@ install(
   pkgs = NULL,
   ignorePkgs = NULL,
   lib.loc = NULL,
-  allDeps = FALSE,
   ask = TRUE,
   force = FALSE,
   quiet = TRUE
@@ -23,7 +22,6 @@ update(
   pkgs = NULL,
   ignorePkgs = NULL,
   lib.loc = NULL,
-  allDeps = FALSE,
   ask = TRUE,
   quiet = TRUE
 )
@@ -45,21 +43,22 @@ See below for more details.}
 
 \item{pkgs}{A \code{character} vector with a subset of packages to process. If \code{NULL} then all packages are considered.}
 
-\item{ignorePkgs}{A \code{character} vector with packages that will not be considered. Can also be \code{"big"} to exclude
-large packages (\emph{e.g.} \pkg{patRoonDeps}). If \code{NULL} then no packages will be ignored.}
+\item{ignorePkgs}{A \code{character} vector with packages that will not be considered. Can also include \code{"big"} to exclude
+large packages (\emph{e.g.} \pkg{patRoonDeps}). This option overrides \code{pkgs} in case of conflicts. If \code{NULL} then no
+packages will be ignored.}
 
 \item{lib.loc}{The path to the \R library where packages will be installed. Set to \code{NULL} for the default \R library.}
-
-\item{allDeps}{Consider \emph{all} dependencies, including recursive dependencies. This is mainly useful for \code{sync()}.
-Currently only supported for \code{origin="patRoonDeps"} and when \code{pkgs}/\code{ignorePkgs} are both \code{NULL}.}
 
 \item{ask}{Set to \code{TRUE} to ask before proceeding package installations. No effect on non-interactive \R sessions.}
 
 \item{force}{If \code{TRUE} then packages will \emph{always} be installed, even if already present and with the correct
 version.}
 
-\item{quiet}{If \code{TRUE} the installations are performed more quietly (sets the \code{quiet} option to
-\code{\link[=install.packages]{install.packages()}}.}
+\item{quiet}{If \code{TRUE} the installations are performed more quietly (sets the \code{quiet} option to \code{\link[=install.packages]{install.packages()}}.}
+
+\item{allDeps}{Consider \emph{all} dependencies when synchronizing, including recursive dependencies. This is currently
+only supported for \code{origin="patRoonDeps"}. Note that handling of recursive dependencies currently are not
+influenced by the \code{pkgs} and \code{ignorePkgs} arguments.}
 }
 \value{
 All functions return \code{NULL} invisibly.

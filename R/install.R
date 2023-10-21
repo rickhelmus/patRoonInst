@@ -36,16 +36,17 @@ NULL
 #'   `"runiverse"`, `"regular"`. If `NULL` then the default on Windows is `"patRoonDeps"` and `"runiverse"` otherwise.
 #'   See below for more details.
 #' @param pkgs A `character` vector with a subset of packages to process. If `NULL` then all packages are considered.
-#' @param ignorePkgs A `character` vector with packages that will not be considered. Can also be `"big"` to exclude
-#'   large packages (_e.g._ \pkg{patRoonDeps}). If `NULL` then no packages will be ignored.
+#' @param ignorePkgs A `character` vector with packages that will not be considered. Can also include `"big"` to exclude
+#'   large packages (_e.g._ \pkg{patRoonDeps}). This option overrides `pkgs` in case of conflicts. If `NULL` then no
+#'   packages will be ignored.
 #' @param lib.loc The path to the \R library where packages will be installed. Set to `NULL` for the default \R library.
-#' @param allDeps Consider _all_ dependencies, including recursive dependencies. This is mainly useful for `sync()`.
-#'   Currently only supported for `origin="patRoonDeps"` and when `pkgs`/`ignorePkgs` are both `NULL`.
+#' @param allDeps Consider _all_ dependencies when synchronizing, including recursive dependencies. This is currently
+#'   only supported for `origin="patRoonDeps"`. Note that handling of recursive dependencies currently are not
+#'   influenced by the `pkgs` and `ignorePkgs` arguments.
 #' @param ask Set to `TRUE` to ask before proceeding package installations. No effect on non-interactive \R sessions.
 #' @param force If `TRUE` then packages will _always_ be installed, even if already present and with the correct
 #'   version.
-#' @param quiet If `TRUE` the installations are performed more quietly (sets the `quiet` option to
-#'   [install.packages()].
+#' @param quiet If `TRUE` the installations are performed more quietly (sets the `quiet` option to [install.packages()].
 #'
 #' @return All functions return `NULL` invisibly.
 #'
@@ -69,13 +70,8 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
     checkmate::assertFlag(quiet, add = ac)
     checkmate::reportAssertions(ac)
 
-    if (allDeps)
-    {
-        if (!is.null(pkgs) || !is.null(ignorePkgs))
-            stop("Cannot combine allDeps=TRUE with pkgs/ignorePkgs", call. = FALSE)
-        if (origin != "patRoonDeps")
-            stop("allDeps=TRUE currently only works with origin=\"patRoonDeps\"", call. = FALSE)
-    }
+    if (allDeps && origin != "patRoonDeps")
+        stop("allDeps=TRUE currently only works with origin=\"patRoonDeps\"", call. = FALSE)
 
     lp <- NULL
     if (!is.null(lib.loc))
@@ -99,23 +95,28 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
     {
         o <- setdiff(p, names(directDeps))
         if (length(o) > 0)
-            stop(paste("The following packages are unknown:", paste0(o, collapse = ", ")))
+        {
+            stop(paste("The following packages are unknown:", paste0(o, collapse = ", "),
+                       "Valid options are:", paste0(names(directDeps), collapse = ", ")))
+        }
     }
 
     if (!is.null(pkgs))
     {
         checkPkgs(pkgs)
-        directDeps <- directDeps[pkgs]
+        ip <- setdiff(names(directDeps), pkgs)
+        ignorePkgs <- if (is.null(ignorePkgs)) ip else union(ignorePkgs, ip)
     }
     if (!is.null(ignorePkgs))
     {
-        if (ignorePkgs == "big")
-            ignorePkgs <- c("patRoonData", "patRoonExt", "MetaCleanData")
-        else
-            checkPkgs(ignorePkgs)
-        directDeps <- directDeps[!names(directDeps) %in% ignorePkgs]
+        if ("big" %in% ignorePkgs)
+            ignorePkgs <- union(setdiff(ignorePkgs, "big"), c("patRoonData", "patRoonExt", "MetaCleanData"))
+        checkPkgs(ignorePkgs)
     }
-    if (length(directDeps) == 0)
+    else
+        ignorePkgs <- character()
+
+    if (setequal(names(directDeps), ignorePkgs))
     {
         printf("Nothing to install, aborting...")
         return(invisible(NULL))
@@ -128,23 +129,14 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
                       patRoonDeps = installPD$new(),
                       runiverse = installRU$new(),
                       regular = installMain$new())
-    pkgVersions <- backend$packageVersions(directDeps)
 
-    # set rownames to simplify things
-    rownames(instPackages) <- instPackages$Package; rownames(pkgVersions) <- pkgVersions$Package
-
-    if (allDeps)
-    {
-        considerPackages <- merge(instPackages, pkgVersions, by = "Package", all.y = TRUE,
-                                  suffix = c(".inst", ".avail"), sort = FALSE)
-    }
+    pkgVersions <- if (origin == "patRoonDeps")
+        backend$packageVersions(directDeps, ignorePkgs, allDeps)
     else
-    {
-        considerPackages <- data.frame(Package = names(directDeps))
-        considerPackages <- merge(considerPackages, instPackages, by = "Package", all.x = TRUE, sort = FALSE)
-        considerPackages <- merge(considerPackages, pkgVersions, by = "Package", all.x = TRUE, all.y = allDeps,
-                                  suffix = c(".inst", ".avail"), sort = FALSE)
-    }
+        backend$packageVersions(directDeps, ignorePkgs)
+
+    considerPackages <- merge(instPackages, pkgVersions, by = "Package", all.y = TRUE,
+                              suffix = c(".inst", ".avail"), sort = FALSE)
 
     if (action == "force")
         considerPackages$action <- "force" # just install everything
@@ -215,20 +207,19 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
 
 #' @rdname installing
 #' @export
-install <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL, allDeps = FALSE, ask = TRUE,
-                    force = FALSE, quiet = TRUE)
+install <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL, ask = TRUE, force = FALSE,
+                    quiet = TRUE)
 {
     doInstall(action = if (force) "force" else "install", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs,
-              lib.loc = lib.loc, allDeps = allDeps, ask = ask, quiet = quiet)
+              lib.loc = lib.loc, allDeps = FALSE, ask = ask, quiet = quiet)
 }
 
 #' @rdname installing
 #' @export
-update <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL, allDeps = FALSE, ask = TRUE,
-                   quiet = TRUE)
+update <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL, ask = TRUE, quiet = TRUE)
 {
     doInstall(action = "update", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, lib.loc = lib.loc,
-              allDeps = allDeps, ask = ask, quiet = quiet)
+              allDeps = FALSE, ask = ask, quiet = quiet)
 }
 
 #' @rdname installing
