@@ -53,7 +53,6 @@
 <span>  pkgs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ignorePkgs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lib.loc <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  allDeps <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  ask <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  force <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -64,7 +63,6 @@
 <span>  pkgs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ignorePkgs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lib.loc <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  allDeps <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  ask <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
@@ -88,22 +86,15 @@
 See below for more details.</p></dd>
 
 
-<dt>pkgs</dt>
-<dd><p>A <code>character</code> vector with a subset of packages to process. If <code>NULL</code> then all packages are considered.</p></dd>
-
-
-<dt>ignorePkgs</dt>
-<dd><p>A <code>character</code> vector with packages that will not be considered. Can also be <code>"big"</code> to exclude
-large packages (<em>e.g.</em> <span class="pkg">patRoonDeps</span>). If <code>NULL</code> then no packages will be ignored.</p></dd>
+<dt>pkgs, ignorePkgs</dt>
+<dd><p>A <code>character</code> vector with packages to consider/ignore. Execute <code>names(getDirectDeps())</code> to
+obtain valid package options. If <code>NULL</code> then all packages are considered/none are ignored. The <code>ignorePkgs</code>
+argument can also include <code>"big"</code> to exclude large packages (<em>e.g.</em> <span class="pkg">patRoonDeps</span>), and will override <code>pkgs</code> in
+case of conflicts.</p></dd>
 
 
 <dt>lib.loc</dt>
 <dd><p>The path to the <span style="R">R</span> library where packages will be installed. Set to <code>NULL</code> for the default <span style="R">R</span> library.</p></dd>
-
-
-<dt>allDeps</dt>
-<dd><p>Consider <em>all</em> dependencies, including recursive dependencies. This is mainly useful for <code>sync()</code>.
-Currently only supported for <code>origin="patRoonDeps"</code> and when <code>pkgs</code>/<code>ignorePkgs</code> are both <code>NULL</code>.</p></dd>
 
 
 <dt>ask</dt>
@@ -116,8 +107,13 @@ version.</p></dd>
 
 
 <dt>quiet</dt>
-<dd><p>If <code>TRUE</code> the installations are performed more quietly (sets the <code>quiet</code> option to
-<code><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages()</a></code>.</p></dd>
+<dd><p>If <code>TRUE</code> the installations are performed more quietly (sets the <code>quiet</code> option to <code><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages()</a></code>.</p></dd>
+
+
+<dt>allDeps</dt>
+<dd><p>Consider <em>all</em> dependencies when synchronizing, including recursive dependencies. This is currently
+only supported for <code>origin="patRoonDeps"</code>. Note that handling of recursive dependencies currently are not
+influenced by the <code>pkgs</code> and <code>ignorePkgs</code> arguments.</p></dd>
 
 </dl></div>
     <div class="section level2">
