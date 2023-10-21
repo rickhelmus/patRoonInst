@@ -53,24 +53,6 @@ patRoonRepos <- function(which)
     return(ret)
 }
 
-getDirectDeps <- function()
-{
-    # UNDONE: cache this?
-    printf("Downloading dependency file\n")
-    rdpath <- tempfile(fileext = ".R")
-    downloadFile(paste0(patRoonRepos("patRoonDeps"), "/utils/Rdeps.R"), rdpath)
-    rdenv <- new.env()
-    source(rdpath, local = rdenv)
-
-    if (!rdenv$checkRDepsVersion(getMyRDepsVersion()))
-    {
-        stop("The installed patRoonInst versions appears out of date. Please update the package. ",
-             "See the patRoon handbook for more details.", call. = FALSE)
-    }
-
-    return(rdenv$getRDependencies("master", getOS(), withInternal = FALSE, flatten = TRUE))
-}
-
 getPDRepInfo <- function()
 {
     f <- tempfile(fileext = ".tsv")

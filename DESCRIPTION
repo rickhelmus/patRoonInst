@@ -21,6 +21,7 @@ Imports:
     BiocManager,
     withr
 Collate: 
+    'direct_deps.R'
     'install-main.R'
     'install-repos.R'
     'install-PD.R'

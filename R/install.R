@@ -35,10 +35,10 @@ NULL
 #' @param origin Where \pkg{patRoon} and its \R dependencies are installed from. Valid values are: `"patRoonDeps"`,
 #'   `"runiverse"`, `"regular"`. If `NULL` then the default on Windows is `"patRoonDeps"` and `"runiverse"` otherwise.
 #'   See below for more details.
-#' @param pkgs A `character` vector with a subset of packages to process. If `NULL` then all packages are considered.
-#' @param ignorePkgs A `character` vector with packages that will not be considered. Can also include `"big"` to exclude
-#'   large packages (_e.g._ \pkg{patRoonDeps}). This option overrides `pkgs` in case of conflicts. If `NULL` then no
-#'   packages will be ignored.
+#' @param pkgs,ignorePkgs A `character` vector with packages to consider/ignore. Execute `names(getDirectDeps())` to
+#'   obtain valid package options. If `NULL` then all packages are considered/none are ignored. The `ignorePkgs`
+#'   argument can also include `"big"` to exclude large packages (_e.g._ \pkg{patRoonDeps}), and will override `pkgs` in
+#'   case of conflicts.
 #' @param lib.loc The path to the \R library where packages will be installed. Set to `NULL` for the default \R library.
 #' @param allDeps Consider _all_ dependencies when synchronizing, including recursive dependencies. This is currently
 #'   only supported for `origin="patRoonDeps"`. Note that handling of recursive dependencies currently are not

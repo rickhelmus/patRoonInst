@@ -41,11 +41,10 @@ sync(
 \code{"runiverse"}, \code{"regular"}. If \code{NULL} then the default on Windows is \code{"patRoonDeps"} and \code{"runiverse"} otherwise.
 See below for more details.}
 
-\item{pkgs}{A \code{character} vector with a subset of packages to process. If \code{NULL} then all packages are considered.}
-
-\item{ignorePkgs}{A \code{character} vector with packages that will not be considered. Can also include \code{"big"} to exclude
-large packages (\emph{e.g.} \pkg{patRoonDeps}). This option overrides \code{pkgs} in case of conflicts. If \code{NULL} then no
-packages will be ignored.}
+\item{pkgs, ignorePkgs}{A \code{character} vector with packages to consider/ignore. Execute \code{names(getDirectDeps())} to
+obtain valid package options. If \code{NULL} then all packages are considered/none are ignored. The \code{ignorePkgs}
+argument can also include \code{"big"} to exclude large packages (\emph{e.g.} \pkg{patRoonDeps}), and will override \code{pkgs} in
+case of conflicts.}
 
 \item{lib.loc}{The path to the \R library where packages will be installed. Set to \code{NULL} for the default \R library.}
 
