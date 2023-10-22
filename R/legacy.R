@@ -169,6 +169,8 @@ removeLegacy <- function(restoreRProfile = FALSE, ask = TRUE)
             matches <- unlist(lapply(rpLines, grep, pl, fixed = TRUE))
 
             # UNDONE
+            printf("rpLines:\n%s\n", paste0(rpLines, collapse = "\n"))
+            printf("pl:\n%s\n", paste0(pl, collapse = "\n"))
             printf("matches: %s\n", paste0(matches, collapse = ", "))
 
             # make sure that the sequence is found exactly once and in the right order
