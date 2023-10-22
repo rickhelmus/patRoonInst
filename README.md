@@ -1,3 +1,6 @@
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/rickhelmus/patRoonInst/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rickhelmus/patRoonInst/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
 
 # patRoonInst
 
