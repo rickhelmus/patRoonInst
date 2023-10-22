@@ -22,5 +22,7 @@ installRU$methods(
         ri <- do.call(rbind.data.frame, riList)
 
         callSuper(..., reposInfo = ri, reposName = "r-universe", reposIsExclusive = FALSE)
-    }
+    },
+
+    packageVersions = function(directDeps, ignorePkgs) callSuper(directDeps, ignorePkgs, getAll = FALSE)
 )

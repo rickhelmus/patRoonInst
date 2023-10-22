@@ -156,7 +156,7 @@ removeLegacy <- function(restoreRProfile = FALSE, ask = TRUE)
     {
         npp <- normalizePath(getRProfile(), mustWork = FALSE)
         if (!file.exists(npp))
-            printf("File %s file found, no need to restore Rprofile\n", npp)
+            printf("File %s not found, no need to restore Rprofile\n", npp)
         else
         {
             nip <- normalizePath(getLegacyInitScript(), mustWork = FALSE, winslash = "/")
@@ -167,6 +167,9 @@ removeLegacy <- function(restoreRProfile = FALSE, ask = TRUE)
                          sprintf("    source('%s')", nip))
             pl <- readLines(npp)
             matches <- unlist(lapply(rpLines, grep, pl, fixed = TRUE))
+
+            # UNDONE
+            printf("matches: %s\n", paste0(matches, collapse = ", "))
 
             # make sure that the sequence is found exactly once and in the right order
             if (length(matches) == length(rpLines) && !is.unsorted(matches))
