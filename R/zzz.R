@@ -12,6 +12,7 @@
 #'
 #'   \item `patRoonInst.repos.runiverse` The URL to the [r-universe](https://r-universe.dev/) \R package repository.
 #'
+#'   \item `patRoonInst.path.legacy` The directory where legacy files were installed.
 #'   }
 #'
 "_PACKAGE"
@@ -23,7 +24,8 @@ defaultPkgOpts <- function(pkgname)
 {
     ret <- list(
         repos.patRoonDeps = "https://rickhelmus.github.io/patRoonDeps",
-        repos.runiverse = "https://rickhelmus.r-universe.dev"
+        repos.runiverse = "https://rickhelmus.r-universe.dev",
+        path.legacy = "~"
     )
     return(setNames(ret, paste0(pkgname, ".", names(ret))))
 }

@@ -31,8 +31,10 @@
 #' @name legacy
 NULL
 
-getLegacyDataDir <- function() "~/patRoon-install"
-getLegacyInitScript <- function(dis = FALSE) if (!dis) "~/.Rprofile-patRoon.R" else "~/.Rprofile-patRoon.R-disabled"
+getLegacyBaseDir <- function(f) file.path(getOption("patRoonInst.path.legacy", "~"), f)
+getLegacyDataDir <- function() getLegacyBaseDir("patRoon-install")
+getLegacyInitScript <- function(dis = FALSE) getLegacyBaseDir(if (!dis) ".Rprofile-patRoon.R" else ".Rprofile-patRoon.R-disabled")
+getRProfile <- function() getLegacyBaseDir(".Rprofile")
 printLegDone <- function() printf("Done! Please restart R to make the changes effective.\n")
 
 inspectLegacyInstall <- function()
@@ -41,11 +43,11 @@ inspectLegacyInstall <- function()
     dataDirExists <- dir.exists(getLegacyDataDir())
     RprofPatExists <- file.exists(getLegacyInitScript())
     RprofPatDisExists <- file.exists(getLegacyInitScript(dis = TRUE))
-    RprofExists <- file.exists("~/.Rprofile")
+    RprofExists <- file.exists(getRProfile())
 
     printf("Legacy installation currently loaded: %s\n", legacyLoaded)
-    printf("Legacy data directory (~/patRoon-install) exists %s\n", dataDirExists)
-    printf("Legacy init script (~/.Rprofile-patRoon.R) exists: %s\n", RprofPatExists)
+    printf("Legacy data directory ('patRoon-install') exists %s\n", dataDirExists)
+    printf("Legacy init script ('.Rprofile-patRoon.R') exists: %s\n", RprofPatExists)
     printf("Legacy init script was disabled: %s\n", RprofPatDisExists)
     printf("User Rprofile file exists: %s\n", RprofExists)
 
@@ -126,7 +128,7 @@ removeLegacy <- function(restoreRProfile = FALSE)
 
     if (restoreRProfile)
     {
-        npp <- normalizePath("~/.Rprofile", mustWork = FALSE)
+        npp <- normalizePath(getRProfile(), mustWork = FALSE)
         if (!file.exists(npp))
             printf("File %s file found, no need to restore Rprofile\n", npp)
         else

@@ -19,6 +19,7 @@ The following package options (see \code{\link[=options]{options()}}) can be set
 
 \item \code{patRoonInst.repos.runiverse} The URL to the \href{https://r-universe.dev/}{r-universe} \R package repository.
 
+\item \code{patRoonInst.path.legacy} The directory where legacy files were installed.
 }
 }
 
