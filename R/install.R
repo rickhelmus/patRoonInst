@@ -73,12 +73,22 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
     if (allDeps && origin != "patRoonDeps")
         stop("allDeps=TRUE currently only works with origin=\"patRoonDeps\"", call. = FALSE)
 
+    basePackages <- getBasePackages() # NOTE: do before setting .libPaths() below
+
     lp <- NULL
     if (!is.null(lib.loc))
     {
         # NOTE: .libPaths() is set here to prevent install.packages() (and derived functions) from looking for
         # dependencies outside the target library. Unfortunately, this won't remove the default library (ie .Library)
         # from the search path, but this library is often static
+
+        # NOTE: the directory needs to exist in order to be accepted by .libPaths()
+        if (!dir.exists(lib.loc))
+        {
+            if (!dir.create(lib.loc, recursive = TRUE))
+                stop("Could not create directory set to lib.loc", call. = FALSE)
+        }
+
         # NOTE: withr is not used here since it cannot set include.site=FALSE
         lp <- .libPaths()
         on.exit(.libPaths(lp), add = TRUE)
@@ -179,12 +189,6 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
 
     if (!ask || askProceed())
     {
-        if (!is.null(lib.loc) && !dir.exists(lib.loc))
-        {
-            if (!dir.create(lib.loc, recursive = TRUE))
-                stop("Could not create directory set to lib.loc", call. = FALSE)
-        }
-
         backend$install(considerPackages, directDeps, quiet)
 
         # verify if all packages and their deps were installed
@@ -193,6 +197,7 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
         deps <- union(deps, considerPackages$Package)
         instPackages <- getInstalledPackages(lib.loc) # update
         notInstalled <- setdiff(deps, instPackages$Package)
+        notInstalled <- setdiff(notInstalled, basePackages)
 
         if (length(notInstalled) > 0)
         {

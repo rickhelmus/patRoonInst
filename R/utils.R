@@ -19,8 +19,11 @@ getAvailablePackages <- function(...) as.data.frame(available.packages(...))
 
 getInstalledPackages <- function(lib.loc)
 {
-    return(as.data.frame(installed.packages(lib.loc = lib.loc, fields = "RemoteSha")[, c("Package", "Version", "RemoteSha")]))
+    return(as.data.frame(installed.packages(lib.loc = lib.loc, fields = "RemoteSha")[, c("Package", "Version", "RemoteSha"), drop = FALSE]))
 }
+
+# From https://stackoverflow.com/a/68239614
+getBasePackages <- function() rownames(installed.packages(priority = "high"))
 
 getGHRepos <- function(dep, md)
 {
