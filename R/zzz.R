@@ -1,4 +1,23 @@
-# NOTE: this file is mostly the same as patRoon's
+#' Manage patRoon installations
+#'
+#' \Sexpr[results=text,echo=FALSE]{packageDescription("patRoonInst", fields = "Description")}
+#'
+#' @section Package options:
+#'
+#'   The following package options (see [options()]) can be set:
+#'
+#'   \itemize{
+#'
+#'   \item `patRoonInst.repos.patRoonDeps` The URL to the `patRoonDeps` \R package repository.
+#'
+#'   \item `patRoonInst.repos.runiverse` The URL to the [r-universe](https://r-universe.dev/) \R package repository.
+#'
+#'   }
+#'
+"_PACKAGE"
+
+
+# NOTE: the following functions are mostly the same as patRoon's
 
 defaultPkgOpts <- function(pkgname)
 {
