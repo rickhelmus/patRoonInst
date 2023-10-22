@@ -15,9 +15,14 @@ test_that("Ignoring packages", {
 
 test_that("Updating packages", {
     RLib <- initTestRLib()
-    dir.create(RLib, recursive = TRUE) # so that remotes doesn't ask to make it
-    remotes::install_github("sneumann/CAMERA@ac16892", lib = RLib, upgrade = "never") # get old version
+    # dir.create(RLib, recursive = TRUE) # so that remotes doesn't ask to make it
+    # easiest is to first install it, so all deps are pulled in correctly too
+    install(pkgs = "CAMERA", lib.loc = RLib, ask = FALSE)
+
+    # get old version
+    remotes::install_github("sneumann/CAMERA@ac16892", lib = RLib, upgrade = "never")
     oldver <- packageVersion("CAMERA", lib.loc = RLib)
+
     update(pkgs = "CAMERA", lib.loc = RLib, ask = FALSE)
     expect_true(packageVersion("CAMERA", lib.loc = RLib) > oldver)
 })

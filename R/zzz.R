@@ -15,8 +15,18 @@
 #'   \item `patRoonInst.path.legacy` The directory where legacy files were installed.
 #'   }
 #'
+#'
 "_PACKAGE"
 
+# NOTE: some random functions are imported here to ensure namespaces of dependencies are loaded and can be used when
+# .libPaths() is changed during installations.
+
+#' @importFrom stats setNames
+#' @importFrom utils available.packages download.file installed.packages menu packageName read.csv
+#' @importFrom BiocManager containerRepository
+#' @importFrom jsonlite write_json
+#' @importFrom remotes add_metadata
+NULL
 
 # NOTE: the following functions are mostly the same as patRoon's
 
