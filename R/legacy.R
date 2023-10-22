@@ -11,6 +11,8 @@
 #'
 #' The `removeLegacy()` function is used to undo legacy installations.
 #'
+#' @param ask Set to `TRUE` to ask before proceeding. No effect on non-interactive \R sessions.
+#'
 #' @section Background: This section is purely informative, but may be of use when you want to manually manage legacy
 #'   installations.
 #'
@@ -68,8 +70,13 @@ inspectLegacyInstall <- function()
 #'   installation.
 #' @export
 #' @rdname legacy
-toggleLegacy <- function(enable = NULL)
+toggleLegacy <- function(enable = NULL, ask = TRUE)
 {
+    ac <- checkmate::makeAssertCollection()
+    checkmate::assertLogical(enable, null.ok = TRUE, add = ac)
+    checkmate::assertLogical(ask, add = ac)
+    checkmate::reportAssertions(ac)
+
     insp <- inspectLegacyInstall()
 
     if (is.null(enable))
@@ -83,12 +90,24 @@ toggleLegacy <- function(enable = NULL)
 
     if (enable)
     {
+        if (insp$RprofPatExists)
+        {
+            printf("Installation seems already enabled.\n")
+            return(invisible())
+        }
+
         if (!insp$RprofPatDisExists)
             stop("Cannot locate backup init script", call. = FALSE)
         src <- getLegacyInitScript(dis = TRUE); dest <- getLegacyInitScript()
     }
     else
     {
+        if (insp$RprofPatDisExists)
+        {
+            printf("Installation seems already disabled.\n")
+            return(invisible())
+        }
+
         if (!insp$RprofPatExists)
             stop("Cannot locate init script", call. = FALSE)
         src <- getLegacyInitScript(); dest <- getLegacyInitScript(dis = TRUE)
@@ -96,10 +115,12 @@ toggleLegacy <- function(enable = NULL)
 
     printf("The init script will be %s by renaming %s to %s.\n", if (enable) "enabled" else "disabled", src, dest)
 
-    if (askProceed() && !file.rename(src, dest))
-        stop("Failed to rename file!", call. = FALSE)
-
-    printLegDone()
+    if (!ask || askProceed())
+    {
+        if (!file.rename(src, dest))
+            stop("Failed to rename file!", call. = FALSE)
+        printLegDone()
+    }
 
     invisible(NULL)
 }
@@ -108,8 +129,13 @@ toggleLegacy <- function(enable = NULL)
 #'   automatically performed by the legacy installation script.
 #' @export
 #' @rdname legacy
-removeLegacy <- function(restoreRProfile = FALSE)
+removeLegacy <- function(restoreRProfile = FALSE, ask = TRUE)
 {
+    ac <- checkmate::makeAssertCollection()
+    checkmate::assertLogical(restoreRProfile, add = ac)
+    checkmate::assertLogical(ask, add = ac)
+    checkmate::reportAssertions(ac)
+
     insp <- inspectLegacyInstall()
 
     rmPaths <- character()
@@ -158,11 +184,13 @@ removeLegacy <- function(restoreRProfile = FALSE)
         printf("The legacy installation will be removed by deleting the following files and directories: %s\n",
                paste0(rmPaths, collapse = ", "))
 
-        if (askProceed() && unlink(rmPaths, recursive = TRUE) != 0)
-            stop("Error while deleting files!", call. = FALSE)
+        if (!ask || askProceed())
+        {
+            if (unlink(rmPaths, recursive = TRUE) != 0)
+                stop("Error while deleting files!", call. = FALSE)
+            printLegDone()
+        }
     }
-
-    printLegDone()
 
     invisible(NULL)
 }

@@ -6,13 +6,15 @@
 \alias{removeLegacy}
 \title{Manage legacy \pkg{patRoon} installations}
 \usage{
-toggleLegacy(enable = NULL)
+toggleLegacy(enable = NULL, ask = TRUE)
 
-removeLegacy(restoreRProfile = FALSE)
+removeLegacy(restoreRProfile = FALSE, ask = TRUE)
 }
 \arguments{
 \item{enable}{Enables (\code{enable=TRUE}), disables (\code{enable=FALSE}) or toggles (\code{enable=NULL}) a legacy \pkg{patRoon}
 installation.}
+
+\item{ask}{Set to \code{TRUE} to ask before proceeding. No effect on non-interactive \R sessions.}
 
 \item{restoreRProfile}{If \code{TRUE} then the modifications to the user's \code{.Rprofile} file will be removed that were
 automatically performed by the legacy installation script.}
