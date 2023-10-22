@@ -11,6 +11,8 @@ getTestLegDir <- function()
     lsc <- normalizePath(getLegacyInitScript(), winslash = "/", mustWork = FALSE)
     cat("options(legScriptStarted = TRUE)\n", file = lsc)
 
+    # update so path can be properly normalized now that it exists
+    lsc <- normalizePath(getLegacyInitScript(), winslash = "/")
     rpLines <- c(paste("# Automatically added by install_patRoon script on ", date()),
                  sprintf("if (file.exists('%s'))", lsc),
                  sprintf("    source('%s')", lsc))
