@@ -1,4 +1,9 @@
 url: https://rickhelmus.github.io/patRoonInst/
+repo:
+  url:
+    home: https://github.com/rickhelmus/patRoonInst/
+    source: https://github.com/rickhelmus/patRoonInst/blob/HEAD/
+    issue: https://github.com/rickhelmus/patRoon/issues/
+    user: https://github.com/
 template:
   bootstrap: 5
-
