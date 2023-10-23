@@ -15,16 +15,16 @@ test_that("Ignoring packages", {
 
 test_that("Updating packages", {
     RLib <- initTestRLib()
-    # dir.create(RLib, recursive = TRUE) # so that remotes doesn't ask to make it
-    # easiest is to first install it, so all deps are pulled in correctly too
-    install(pkgs = "CAMERA", lib.loc = RLib, ask = FALSE)
+
+    # test updating Rgraqphviz: first install to get all deps, then downgrade from GitHub and then update again
+    install(pkgs = "BiocStyle", lib.loc = RLib, ask = FALSE)
 
     # get old version
-    remotes::install_github("sneumann/CAMERA@ac16892", lib = RLib, upgrade = "never")
-    oldver <- packageVersion("CAMERA", lib.loc = RLib)
+    remotes::install_github("BioConductor/BiocStyle@d4ee8a4", lib = RLib, upgrade = "never")
+    oldver <- packageVersion("BiocStyle", lib.loc = RLib)
 
-    update(pkgs = "CAMERA", lib.loc = RLib, ask = FALSE)
-    expect_true(packageVersion("CAMERA", lib.loc = RLib) > oldver)
+    update(pkgs = "BiocStyle", lib.loc = RLib, ask = FALSE)
+    expect_true(packageVersion("BiocStyle", lib.loc = RLib) > oldver)
 })
 
 # UNDONE: somehow also test sync()? It's already used for patRoon tests on GHA though.
