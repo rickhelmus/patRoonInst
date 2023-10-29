@@ -44,31 +44,28 @@ installRepos$methods(
 
     install = function(pkgs, directDeps, quiet)
     {
-        pkgsInRepos <- pkgs[pkgs$Package %in% reposInfo$Package, ]
-
-        instFunc <- if (reposIsExclusive)
-            utils::install.packages
-        else
-            BiocManager::install # use BiocManager, so deps from BioC (and CRAN) can also be installed
-
         instArgs <- list(quiet = quiet)
-        if (reposIsExclusive)
-            instArgs$repos <- patRoonRepos(reposName)
-        else
-        {
-            instArgs <- c(instArgs, list(site_repository = patRoonRepos(reposName), update = FALSE, ask = FALSE,
-                                         force = TRUE))
-        }
-
         if (binaryOnly)
             instArgs <- c(instArgs, list(type = "binary"))
-
+        
+        pkgsInRepos <- pkgs[pkgs$Package %in% reposInfo$Package, ]
+        
         for (pkg in pkgsInRepos$Package)
         {
             installMsg(pkg, reposName)
-            do.call(instFunc, c(list(pkg), instArgs))
+            if (!reposIsExclusive)
+            {
+                # first install deps: then we can only use our repo while installing the package, which avoids
+                # installing newer versions from other repos
+                repos <- c(patRoonRepos(reposName), BiocManager::repositories())
+                pd <- remotes::package_deps(pkg, repos = repos)
+                pd <- pd[is.na(pd$installed) & !is.na(pd$available) & pd$package != pkg, ]
+                if (nrow(pd) > 0)
+                    do.call(utils::install.packages, modifyList(instArgs, list(pkgs = pd$package, repos = repos)))
+            }
+            do.call(instFunc, c(list(pkg, repos = patRoonRepos(reposName)), instArgs))
         }
-
+        
         otherPkgs <- pkgs[!pkgs$Package %in% reposInfo$Package, ]
         if (nrow(otherPkgs) > 0)
             callSuper(pkgs = otherPkgs, directDeps = directDeps, quiet = quiet)
