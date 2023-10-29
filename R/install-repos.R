@@ -63,7 +63,7 @@ installRepos$methods(
                 if (nrow(pd) > 0)
                     do.call(utils::install.packages, modifyList(instArgs, list(pkgs = pd$package, repos = repos)))
             }
-            do.call(instFunc, c(list(pkg, repos = patRoonRepos(reposName)), instArgs))
+            do.call(utils::install.packages, c(list(pkg, repos = patRoonRepos(reposName)), instArgs))
         }
         
         otherPkgs <- pkgs[!pkgs$Package %in% reposInfo$Package, ]
