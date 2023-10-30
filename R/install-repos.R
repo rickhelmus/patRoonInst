@@ -49,6 +49,7 @@ installRepos$methods(
             instArgs <- c(instArgs, list(type = "binary"))
         
         pkgsInRepos <- pkgs[pkgs$Package %in% reposInfo$Package, ]
+        repos <- patRoonRepos(reposName)
         
         for (pkg in pkgsInRepos$Package)
         {
@@ -57,13 +58,16 @@ installRepos$methods(
             {
                 # first install deps: then we can only use our repo while installing the package, which avoids
                 # installing newer versions from other repos
-                repos <- c(patRoonRepos(reposName), BiocManager::repositories())
                 pd <- remotes::package_deps(pkg, repos = repos)
-                pd <- pd[is.na(pd$installed) & !is.na(pd$available) & pd$package != pkg, ]
+                pd <- pd[is.na(pd$installed) & pd$package != pkg, ]
                 if (nrow(pd) > 0)
-                    do.call(utils::install.packages, modifyList(instArgs, list(pkgs = pd$package, repos = repos)))
+                {
+                    do.call(utils::install.packages, modifyList(instArgs, list(pkgs = pd$package,
+                                                                               #NOTE: add CRAN/BioC repos so all deps can be found
+                                                                               repos = c(repos, BiocManager::repositories()))))
+                }
             }
-            do.call(utils::install.packages, c(list(pkg, repos = patRoonRepos(reposName)), instArgs))
+            do.call(utils::install.packages, c(list(pkg, repos = repos), instArgs))
         }
         
         otherPkgs <- pkgs[!pkgs$Package %in% reposInfo$Package, ]
