@@ -32,13 +32,13 @@ NULL
 #' Packages that originate from GitHub (even when obtained via `patRoonDeps`/`runiverse`) will _also_ be synchronized
 #' with `update()`, since these packages typically involve 'snapshots' with unreliable version information.
 #'
-#' @param origin Where \pkg{patRoon} and its \R dependencies are installed from. Valid values are: `"patRoonDeps"`,
-#'   `"runiverse"`, `"regular"`. If `NULL` then the default on Windows is `"patRoonDeps"` and `"runiverse"` otherwise.
-#'   See below for more details.
 #' @param pkgs,ignorePkgs A `character` vector with packages to consider/ignore. Execute `names(getDirectDeps())` to
 #'   obtain valid package options. If `NULL` then all packages are considered/none are ignored. The `ignorePkgs`
 #'   argument can also include `"big"` to exclude large packages (_e.g._ \pkg{patRoonDeps}), and will override `pkgs` in
 #'   case of conflicts.
+#' @param origin Where \pkg{patRoon} and its \R dependencies are installed from. Valid values are: `"patRoonDeps"`,
+#'   `"runiverse"`, `"regular"`. If `NULL` then the default on Windows is `"patRoonDeps"` and `"runiverse"` otherwise.
+#'   See below for more details.
 #' @param lib.loc The path to the \R library where packages will be installed. Set to `NULL` for the default \R library.
 #' @param allDeps Consider _all_ dependencies when synchronizing, including recursive dependencies. This is currently
 #'   only supported for `origin="patRoonDeps"`. Note that handling of recursive dependencies currently are not
@@ -53,15 +53,15 @@ NULL
 #' @name installing
 NULL
 
-doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, quiet)
+doInstall <- function(action, pkgs, ignorePkgs, origin, lib.loc, allDeps, ask, quiet)
 {
     if (is.null(origin))
         origin <- if (getOS() == "windows") "patRoonDeps" else "runiverse"
 
     ac <- checkmate::makeAssertCollection()
     checkmate::assertChoice(action, c("install", "force", "update", "sync"), add = ac)
-    checkmate::assertChoice(origin, c("patRoonDeps", "runiverse", "regular"), add = ac)
     checkmate::assertCharacter(pkgs, null.ok = TRUE, min.chars = 1, any.missing = FALSE, min.len = 1, add = ac)
+    checkmate::assertChoice(origin, c("patRoonDeps", "runiverse", "regular"), add = ac)
     checkmate::assertCharacter(ignorePkgs, null.ok = TRUE, min.chars = 1, any.missing = FALSE, add = ac)
     if (!is.null(lib.loc) && file.exists(lib.loc))
         checkmate::assertDirectoryExists(lib.loc, access = "w", add = ac)
@@ -212,26 +212,26 @@ doInstall <- function(action, origin, pkgs, ignorePkgs, lib.loc, allDeps, ask, q
 
 #' @rdname installing
 #' @export
-install <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL, ask = TRUE, force = FALSE,
+install <- function(pkgs = NULL, ignorePkgs = NULL, origin = NULL, lib.loc = NULL, ask = TRUE, force = FALSE,
                     quiet = TRUE)
 {
-    doInstall(action = if (force) "force" else "install", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs,
+    doInstall(action = if (force) "force" else "install", pkgs = pkgs, ignorePkgs = ignorePkgs, origin = origin,
               lib.loc = lib.loc, allDeps = FALSE, ask = ask, quiet = quiet)
 }
 
 #' @rdname installing
 #' @export
-update <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL, ask = TRUE, quiet = TRUE)
+update <- function(pkgs = NULL, ignorePkgs = NULL, origin = NULL, lib.loc = NULL, ask = TRUE, quiet = TRUE)
 {
-    doInstall(action = "update", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, lib.loc = lib.loc,
+    doInstall(action = "update", pkgs = pkgs, ignorePkgs = ignorePkgs, origin = origin, lib.loc = lib.loc, 
               allDeps = FALSE, ask = ask, quiet = quiet)
 }
 
 #' @rdname installing
 #' @export
-sync <- function(origin = NULL, pkgs = NULL, ignorePkgs = NULL, lib.loc = NULL, allDeps = FALSE, ask = TRUE,
+sync <- function(pkgs = NULL, ignorePkgs = NULL, origin = NULL, lib.loc = NULL, allDeps = FALSE, ask = TRUE,
                  quiet = TRUE)
 {
-    doInstall(action = "sync", origin = origin, pkgs = pkgs, ignorePkgs = ignorePkgs, lib.loc = lib.loc,
+    doInstall(action = "sync", pkgs = pkgs, ignorePkgs = ignorePkgs, origin = origin, lib.loc = lib.loc,
               allDeps = allDeps, ask = ask, quiet = quiet)
 }

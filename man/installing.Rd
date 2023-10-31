@@ -8,9 +8,9 @@
 \title{Managing \pkg{patRoon} installations}
 \usage{
 install(
-  origin = NULL,
   pkgs = NULL,
   ignorePkgs = NULL,
+  origin = NULL,
   lib.loc = NULL,
   ask = TRUE,
   force = FALSE,
@@ -18,18 +18,18 @@ install(
 )
 
 update(
-  origin = NULL,
   pkgs = NULL,
   ignorePkgs = NULL,
+  origin = NULL,
   lib.loc = NULL,
   ask = TRUE,
   quiet = TRUE
 )
 
 sync(
-  origin = NULL,
   pkgs = NULL,
   ignorePkgs = NULL,
+  origin = NULL,
   lib.loc = NULL,
   allDeps = FALSE,
   ask = TRUE,
@@ -37,14 +37,14 @@ sync(
 )
 }
 \arguments{
-\item{origin}{Where \pkg{patRoon} and its \R dependencies are installed from. Valid values are: \code{"patRoonDeps"},
-\code{"runiverse"}, \code{"regular"}. If \code{NULL} then the default on Windows is \code{"patRoonDeps"} and \code{"runiverse"} otherwise.
-See below for more details.}
-
 \item{pkgs, ignorePkgs}{A \code{character} vector with packages to consider/ignore. Execute \code{names(getDirectDeps())} to
 obtain valid package options. If \code{NULL} then all packages are considered/none are ignored. The \code{ignorePkgs}
 argument can also include \code{"big"} to exclude large packages (\emph{e.g.} \pkg{patRoonDeps}), and will override \code{pkgs} in
 case of conflicts.}
+
+\item{origin}{Where \pkg{patRoon} and its \R dependencies are installed from. Valid values are: \code{"patRoonDeps"},
+\code{"runiverse"}, \code{"regular"}. If \code{NULL} then the default on Windows is \code{"patRoonDeps"} and \code{"runiverse"} otherwise.
+See below for more details.}
 
 \item{lib.loc}{The path to the \R library where packages will be installed. Set to \code{NULL} for the default \R library.}
 
