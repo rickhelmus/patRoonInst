@@ -49,9 +49,9 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">install</span><span class="op">(</span></span>
-<span>  origin <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pkgs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ignorePkgs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  origin <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lib.loc <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ask <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  force <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -59,18 +59,18 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">update</span><span class="op">(</span></span>
-<span>  origin <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pkgs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ignorePkgs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  origin <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lib.loc <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ask <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">sync</span><span class="op">(</span></span>
-<span>  origin <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pkgs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ignorePkgs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  origin <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lib.loc <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  allDeps <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  ask <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -80,17 +80,17 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>origin</dt>
-<dd><p>Where <span class="pkg">patRoon</span> and its <span style="R">R</span> dependencies are installed from. Valid values are: <code>"patRoonDeps"</code>,
-<code>"runiverse"</code>, <code>"regular"</code>. If <code>NULL</code> then the default on Windows is <code>"patRoonDeps"</code> and <code>"runiverse"</code> otherwise.
-See below for more details.</p></dd>
-
-
-<dt>pkgs, ignorePkgs</dt>
+    <dl><dt>pkgs, ignorePkgs</dt>
 <dd><p>A <code>character</code> vector with packages to consider/ignore. Execute <code>names(getDirectDeps())</code> to
 obtain valid package options. If <code>NULL</code> then all packages are considered/none are ignored. The <code>ignorePkgs</code>
 argument can also include <code>"big"</code> to exclude large packages (<em>e.g.</em> <span class="pkg">patRoonDeps</span>), and will override <code>pkgs</code> in
 case of conflicts.</p></dd>
+
+
+<dt>origin</dt>
+<dd><p>Where <span class="pkg">patRoon</span> and its <span style="R">R</span> dependencies are installed from. Valid values are: <code>"patRoonDeps"</code>,
+<code>"runiverse"</code>, <code>"regular"</code>. If <code>NULL</code> then the default on Windows is <code>"patRoonDeps"</code> and <code>"runiverse"</code> otherwise.
+See below for more details.</p></dd>
 
 
 <dt>lib.loc</dt>
