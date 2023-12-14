@@ -54,7 +54,7 @@ installRepos$methods(
         {
             if (!pkg %in% reposInfo$Package)
             {
-                callSuper(pkgs = pkg, directDeps = directDeps, quiet = quiet)
+                callSuper(pkgs = pkgs[pkgs$Package == pkg, ], directDeps = directDeps, quiet = quiet)
                 next
             }
             
