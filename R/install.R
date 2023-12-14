@@ -148,6 +148,10 @@ doInstall <- function(action, pkgs, ignorePkgs, origin, lib.loc, allDeps, ask, q
     considerPackages <- merge(instPackages, pkgVersions, by = "Package", all.y = TRUE,
                               suffix = c(".inst", ".avail"), sort = FALSE)
 
+    # sync order so that deps are installed in the right order
+    ord <- match(considerPackages$Package, names(directDeps), nomatch = 0)
+    considerPackages <- considerPackages[order(ord), ]
+    
     if (action == "force")
         considerPackages$action <- "force" # just install everything
     else
