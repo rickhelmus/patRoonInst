@@ -48,11 +48,16 @@ installRepos$methods(
         if (binaryOnly)
             instArgs <- c(instArgs, list(type = "binary"))
         
-        pkgsInRepos <- pkgs[pkgs$Package %in% reposInfo$Package, ]
         repos <- patRoonRepos(reposName)
         
-        for (pkg in pkgsInRepos$Package)
+        for (pkg in pkgs$Package)
         {
+            if (!pkg %in% reposInfo$Package)
+            {
+                callSuper(pkgs = pkg, directDeps = directDeps, quiet = quiet)
+                next
+            }
+            
             installMsg(pkg, reposName)
             if (!reposIsExclusive)
             {
@@ -69,9 +74,5 @@ installRepos$methods(
             }
             do.call(utils::install.packages, c(list(pkg, repos = repos), instArgs))
         }
-        
-        otherPkgs <- pkgs[!pkgs$Package %in% reposInfo$Package, ]
-        if (nrow(otherPkgs) > 0)
-            callSuper(pkgs = otherPkgs, directDeps = directDeps, quiet = quiet)
     }
 )
