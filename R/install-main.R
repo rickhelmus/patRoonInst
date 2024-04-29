@@ -52,7 +52,7 @@ installMain$methods(
             {
                 installMsg(pkgn, "GitHub")
                 dd <- directDeps[[pkgn]]
-                remotes::install_github(getGHRepos(pkgn, dd), ref = getGHRef(dd), subdir = dd[["subdir"]],
+                remotes::install_github(getGHRepos(pkgn, dd), ref = getGHRef(dd), subdir = dd[["pkgroot"]],
                                         upgrade = "never", force = TRUE, quiet = quiet)
             }
         }
