@@ -1,27 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://rickhelmus.github.io/patRoonInst/404.html</loc>
-  </url>
-  <url>
-    <loc>https://rickhelmus.github.io/patRoonInst/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://rickhelmus.github.io/patRoonInst/index.html</loc>
-  </url>
-  <url>
-    <loc>https://rickhelmus.github.io/patRoonInst/reference/getDirectDeps.html</loc>
-  </url>
-  <url>
-    <loc>https://rickhelmus.github.io/patRoonInst/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://rickhelmus.github.io/patRoonInst/reference/installing.html</loc>
-  </url>
-  <url>
-    <loc>https://rickhelmus.github.io/patRoonInst/reference/legacy.html</loc>
-  </url>
-  <url>
-    <loc>https://rickhelmus.github.io/patRoonInst/reference/patRoonInst-package.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://rickhelmus.github.io/patRoonInst/404.html</loc></url>
+<url><loc>https://rickhelmus.github.io/patRoonInst/authors.html</loc></url>
+<url><loc>https://rickhelmus.github.io/patRoonInst/index.html</loc></url>
+<url><loc>https://rickhelmus.github.io/patRoonInst/reference/getDirectDeps.html</loc></url>
+<url><loc>https://rickhelmus.github.io/patRoonInst/reference/index.html</loc></url>
+<url><loc>https://rickhelmus.github.io/patRoonInst/reference/installing.html</loc></url>
+<url><loc>https://rickhelmus.github.io/patRoonInst/reference/legacy.html</loc></url>
+<url><loc>https://rickhelmus.github.io/patRoonInst/reference/patRoonInst-package.html</loc></url>
 </urlset>
+
