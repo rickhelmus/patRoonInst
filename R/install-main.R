@@ -45,6 +45,8 @@ installMain$methods(
             pkgn <- pkgs$Package[i]
             if (is.na(pkgs$RemoteSha.avail[i]))
             {
+                #.from https://stackoverflow.com/a/51530225: also accept source builds
+                withr::local_options(list(install.packages.compile.from.source = "both"))
                 installMsg(pkgn, "CRAN/BioConductor")
                 BiocManager::install(pkgn, update = FALSE, ask = FALSE, force = TRUE, quiet = quiet)
             }

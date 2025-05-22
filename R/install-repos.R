@@ -47,6 +47,11 @@ installRepos$methods(
         instArgs <- list(quiet = quiet)
         if (binaryOnly)
             instArgs <- c(instArgs, list(type = "binary"))
+        else
+        {
+            #.from https://stackoverflow.com/a/51530225: also accept source builds
+            withr::local_options(list(install.packages.compile.from.source = "both"))
+        }
         
         repos <- patRoonRepos(reposName)
         
